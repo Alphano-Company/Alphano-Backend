@@ -21,9 +21,12 @@ public class Problem extends BaseTimeEntity {
     @Column(name = "problem_id")
     private Long id;
 
+    private String title;
     private String content;
     private String inputFormat;
     private String outputFormat;
+    private Integer submissionCount;
+    private Integer submitterCount;
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
     private List<Submission> submissions = new ArrayList<>();
