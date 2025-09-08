@@ -21,6 +21,7 @@ public class Problem extends BaseTimeEntity {
     @Column(name = "problem_id")
     private Long id;
 
+    private String title;
     private String content;
     private String inputFormat;
     private String outputFormat;

@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .logout(logout -> logout.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
+                        .requestMatchers("/problems").permitAll()
                         .anyRequest().authenticated()
                 );
 
