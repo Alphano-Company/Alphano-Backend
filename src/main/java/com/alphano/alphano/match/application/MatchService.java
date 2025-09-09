@@ -30,7 +30,7 @@ public class MatchService {
     private final ProblemRepository problemRepository;
 
     public MatchResponse create(Long problemId, @Valid MatchRequest request) {
-        if (problemRepository.findById(problemId).isPresent()) {
+        if (problemRepository.findById(problemId).isEmpty()) {
             throw ProblemNotFoundException.EXCEPTION;
         }
 
