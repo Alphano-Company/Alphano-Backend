@@ -17,6 +17,19 @@ spring:
     init:
       mode: always
 
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      sns:
+        topic:
+          match-request: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-request
+          match-result: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-result
+      sqs:
+        queues:
+          backend: alphano-BackendQueue
+          match-worker: alphano-MatchWorkerQueue
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
