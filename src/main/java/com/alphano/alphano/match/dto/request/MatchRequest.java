@@ -1,9 +1,11 @@
 package com.alphano.alphano.match.dto.request;
 
+
+import jakarta.validation.constraints.NotNull;
+
 public record MatchRequest(
-        Long problemId,
-        Integer randomSeed,
-        Long agent1Id  // 로그인한 유저
+        @NotNull Long agent1Id, // 로그인한 유저
+        @NotNull Long submissionId
 ){
 
 }

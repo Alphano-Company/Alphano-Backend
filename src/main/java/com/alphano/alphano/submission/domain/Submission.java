@@ -22,11 +22,11 @@ public class Submission extends BaseTimeEntity {
     private Long id;
 
     private String language;
-    private String content;
     private boolean isDefault;
     private Integer win;
     private Integer lose;
     private Integer draw;
+    private String codeKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
