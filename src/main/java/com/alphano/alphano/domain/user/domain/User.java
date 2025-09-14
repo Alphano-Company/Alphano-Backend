@@ -26,6 +26,9 @@ public class User extends BaseTimeEntity {
     private String password;
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Submission> submissions = new ArrayList<>();
 
