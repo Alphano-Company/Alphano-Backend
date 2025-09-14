@@ -22,4 +22,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> IdentifierNotFoundException.EXCEPTION);
         return new PrincipalUserDetails(user);
     }
+
+    public UserDetails loadUserByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> IdentifierNotFoundException.EXCEPTION);
+        return new PrincipalUserDetails(user);
+    }
 }

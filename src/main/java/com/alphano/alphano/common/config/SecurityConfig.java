@@ -1,16 +1,26 @@
 package com.alphano.alphano.common.config;
 
+import com.alphano.alphano.security.adaptor.ErrorResponseWriter;
+import com.alphano.alphano.security.exception.SecurityErrorCode;
+import com.alphano.alphano.security.filter.JwtAuthorizationFilter;
+import com.alphano.alphano.security.filter.JwtExceptionFilter;
+import com.alphano.alphano.security.jwt.JwtProvider;
+import com.alphano.alphano.security.service.CustomUserDetailsService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -29,11 +39,34 @@ public class SecurityConfig {
     };
 
     private final ObjectMapper objectMapper;
+    private final JwtProvider jwtProvider;
+    private final CustomUserDetailsService userDetailsService;
+    private final ErrorResponseWriter writer;
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint restEntryPoint() {
+        return (request, response, auth) ->
+            writer.write(response, SecurityErrorCode.AUTHENTICATION_REQUIRED);
+    }
+
+    @Bean
+    public AccessDeniedHandler restDeniedHandler() {
+        return (request, response, auth) ->
+                writer.write(response, SecurityErrorCode.ACCESS_DENIED);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http
     ) throws Exception {
+        var jwtAuthorizationFilter = new JwtAuthorizationFilter(jwtProvider, userDetailsService);
+        var jwtExceptionFilter = new JwtExceptionFilter(writer);
+
         http
                 // 세션/기본 인증 비활성화
                 .csrf(csrf -> csrf.disable())
@@ -49,8 +82,8 @@ public class SecurityConfig {
                 )
 
                 // 필터 추가
-                // .addFilter(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class)
-                // .addFilter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
         ;
 
         return http.build();
