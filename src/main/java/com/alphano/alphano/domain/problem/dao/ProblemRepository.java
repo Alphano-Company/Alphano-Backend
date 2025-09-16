@@ -11,7 +11,7 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
 
     @Query(
             value = """
-                    select new com.alphano.alphano.problem.dto.response.ProblemSummaryResponse(
+                    select new com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse(
                         p.id,
                         p.title,
                         p.submissionCount, 
