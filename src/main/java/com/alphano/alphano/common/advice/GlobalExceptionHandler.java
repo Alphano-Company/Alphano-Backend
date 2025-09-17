@@ -30,7 +30,7 @@ import java.nio.file.AccessDeniedException;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AlphanoCodeException.class)
-    public ResponseEntity<ErrorResponse> AlphanoCodeExceptionHandler(AlphanoCodeException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> alphanoCodeExceptionHandler(AlphanoCodeException e, HttpServletRequest request) {
         BaseErrorCode code = e.getErrorCode();
         ErrorReason errorReason = code.getErrorReason();
         ErrorResponse errorResponse = ErrorResponse.from(errorReason, request.getRequestURL().toString());
@@ -78,10 +78,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object>  handleMethodArgumentNotValid(MethodArgumentNotValidException e,
-                                                                   HttpHeaders headers,
-                                                                   HttpStatusCode status,
-                                                                   WebRequest request) {
+    protected ResponseEntity<Object>  handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
 
         ErrorReason errorReason = ErrorReason.builder()
