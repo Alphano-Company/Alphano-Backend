@@ -46,15 +46,7 @@ public class AuthService {
 
         User saved = userRepository.save(user);
 
-        String accessToken = jwtProvider.createAccessToken(
-                saved.getId(),
-                saved.getIdentifier(),
-                List.of(saved.getRole().getValue())
-        );
-
-        String refreshToken = jwtProvider.createRefreshToken(saved.getId());
-
-        return UserInfoResponse.from(saved, accessToken, refreshToken);
+        return issueTokens(saved);
     }
 
     /**
@@ -71,14 +63,23 @@ public class AuthService {
             throw InvalidPasswordException.EXCEPTION;
         }
 
+        return issueTokens(user);
+    }
+
+    // ===== Helper method =====//
+    private UserInfoResponse issueTokens(User user) {
+        var roles = rolesOf(user);
         String accessToken = jwtProvider.createAccessToken(
                 user.getId(),
                 user.getIdentifier(),
-                List.of(user.getRole().getValue())
+                roles
         );
-
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
 
         return UserInfoResponse.from(user, accessToken, refreshToken);
+    }
+
+    private List<String> rolesOf(User user) {
+        return List.of(user.getRole().getValue());
     }
 }
