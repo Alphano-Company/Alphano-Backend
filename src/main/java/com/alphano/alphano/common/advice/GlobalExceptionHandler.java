@@ -6,7 +6,6 @@ import com.alphano.alphano.common.exception.AlphanoCodeException;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import com.alphano.alphano.common.exception.GlobalErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 
@@ -35,6 +35,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ErrorReason errorReason = code.getErrorReason();
         ErrorResponse errorResponse = ErrorResponse.from(errorReason, request.getRequestURL().toString());
         return ResponseEntity.status(HttpStatus.valueOf(errorReason.getStatus())).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException e, HttpServletRequest request) {
+        ErrorReason errorReason = ErrorReason.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .code("UNAUTHORIZED_401")
+                .reason("인증이 필요합니다.")
+                .build();
+        ErrorResponse errorResponse = ErrorResponse.from(errorReason, request.getRequestURL().toString());
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(errorResponse);
     }
 
     @ExceptionHandler({ AccessDeniedException.class, AuthorizationDeniedException.class })
