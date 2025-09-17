@@ -4,20 +4,19 @@ import com.alphano.alphano.domain.auth.dto.LoginRequest;
 import com.alphano.alphano.domain.auth.dto.SignupRequest;
 import com.alphano.alphano.domain.auth.exception.IdentifierAlreadyExistsException;
 import com.alphano.alphano.domain.auth.exception.InvalidPasswordException;
+import com.alphano.alphano.domain.auth.exception.NicknameAlreadyExistsException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.Role;
 import com.alphano.alphano.domain.user.domain.User;
 import com.alphano.alphano.domain.user.dto.UserInfoResponse;
 import com.alphano.alphano.security.exception.IdentifierNotFoundException;
 import com.alphano.alphano.security.jwt.JwtProvider;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +32,9 @@ public class AuthService {
      * @return
      */
     @Transactional
-    public UserInfoResponse signup(@Valid SignupRequest request) {
-        if (userRepository.findByIdentifier(request.identifier()).isPresent()) {
-            throw IdentifierAlreadyExistsException.EXCEPTION;
-        }
+    public UserInfoResponse signup(SignupRequest request) {
+        validateIdentifierUnique(request.identifier(), request.nickname());
+
         User user = User.builder()
                 .identifier(request.identifier())
                 .password(passwordEncoder.encode(request.password()))
@@ -55,7 +53,7 @@ public class AuthService {
      * @return
      */
     @Transactional
-    public UserInfoResponse login(@Valid LoginRequest request) {
+    public UserInfoResponse login(LoginRequest request) {
         User user = userRepository.findByIdentifier(request.identifier())
                 .orElseThrow(() -> IdentifierNotFoundException.EXCEPTION);
 
@@ -67,6 +65,17 @@ public class AuthService {
     }
 
     // ===== Helper method =====//
+
+    private void validateIdentifierUnique(String identifier, String nickname) {
+        if (userRepository.existsByIdentifier(identifier)) {
+            throw IdentifierAlreadyExistsException.EXCEPTION;
+        }
+
+        if (userRepository.existsByNickname(nickname)) {
+            throw NicknameAlreadyExistsException.EXCEPTION;
+        }
+    }
+
     private UserInfoResponse issueTokens(User user) {
         var roles = rolesOf(user);
         String accessToken = jwtProvider.createAccessToken(
