@@ -55,8 +55,8 @@ public class MatchService {
         MatchJobMessage msg = new MatchJobMessage(
                 problemId,
                 seed,
-                new MatchJobMessage.Agent(mine.getUser().getId(), mine.getId(), mine.getCodeKey(), mine.getLanguage()),
-                new MatchJobMessage.Agent(opp.getUser().getId(), opp.getId(), opp.getCodeKey(), opp.getLanguage())
+                new MatchJobMessage.Agent(mine.getUser().getId(), mine.getId(), mine.getLanguage(), mine.getCodeKey()),
+                new MatchJobMessage.Agent(opp.getUser().getId(), opp.getId(), opp.getLanguage(), opp.getCodeKey())
         );
         judgeJobPublisher.publishMatchRequest(msg);
 
