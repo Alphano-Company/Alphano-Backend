@@ -1,6 +1,7 @@
 package com.alphano.alphano.domain.auth.api;
 
 import com.alphano.alphano.domain.auth.application.AuthService;
+import com.alphano.alphano.domain.auth.dto.LoginRequest;
 import com.alphano.alphano.domain.auth.dto.SignupRequest;
 import com.alphano.alphano.domain.user.dto.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,5 +25,13 @@ public class AuthController {
             @Valid @RequestBody SignupRequest request
     ) {
         return ResponseEntity.ok(authService.signup(request));
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인")
+    ResponseEntity<UserInfoResponse> login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }
