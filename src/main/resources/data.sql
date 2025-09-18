@@ -23,8 +23,8 @@ INSERT INTO users(
     updated_at,
     role
 ) VALUES
-      ('profile1.png', 'amily9011', '1234', 'cherry', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
-      ('profile2.png', 'amily9012', '1234', 'cherry2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER');
+      ('profile1.png', 'amily9011', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', 'cherry', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
+      ('profile2.png', 'amily9012', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', 'cherry2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER');
 
 -- 제출 등록 (submission_id는 자동 생성)
 -- FK(user_id, problem_id)는 위에서 INSERT한 순서대로 1, 2, 3... 값이 매겨짐

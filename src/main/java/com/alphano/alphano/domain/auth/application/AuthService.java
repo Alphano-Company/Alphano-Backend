@@ -1,5 +1,6 @@
 package com.alphano.alphano.domain.auth.application;
 
+import com.alphano.alphano.domain.auth.dto.AccessTokenResponse;
 import com.alphano.alphano.domain.auth.dto.LoginRequest;
 import com.alphano.alphano.domain.auth.dto.SignupRequest;
 import com.alphano.alphano.domain.auth.exception.IdentifierAlreadyExistsException;
@@ -10,8 +11,11 @@ import com.alphano.alphano.domain.user.domain.Role;
 import com.alphano.alphano.domain.user.domain.User;
 import com.alphano.alphano.domain.user.dto.UserInfoResponse;
 import com.alphano.alphano.security.exception.IdentifierNotFoundException;
+import com.alphano.alphano.security.exception.InvalidTokenException;
 import com.alphano.alphano.security.jwt.JwtProvider;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,12 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+
+    @Value("${jwt.expiration.access}")
+    private long accessTtl;
+
+    @Value("${jwt.expiration.refresh}")
+    private long refreshTtl;
 
     /**
      * 회원 가입
@@ -91,4 +101,18 @@ public class AuthService {
     private List<String> rolesOf(User user) {
         return List.of(user.getRole().getValue());
     }
+
+    /*
+    public AccessTokenResponse reissueAccessToken(String refreshToken) {
+        Claims claims = jwtProvider.parseToken(refreshToken);
+
+        String category = claims.get("category", String.class);
+        if (!"reissue".equals(category)) {
+            throw InvalidTokenException.EXCEPTION;
+        }
+
+        Long userId = Long.valueOf(claims.getSubject());
+        String stored = ref
+    }
+     */
 }

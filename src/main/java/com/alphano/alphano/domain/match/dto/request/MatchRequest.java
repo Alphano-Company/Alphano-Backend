@@ -1,11 +1,13 @@
 package com.alphano.alphano.domain.match.dto.request;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 public record MatchRequest(
-        @NotNull Long agent1Id, // 로그인한 유저
-        @NotNull Long submissionId
+        @NotNull
+        @Schema(description = "제출 ID", example = "1")
+        Long submissionId
 ){
 
 }
