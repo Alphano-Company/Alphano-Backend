@@ -1,6 +1,10 @@
 package com.alphano.alphano.common.consts;
 
 public class AlphanoStatic {
+    public static final String ALPHANO_PRIVATE = "alphano-private";
+    public static final String ALPHANO_PUBLIC = "alphano-public";
+    public static final String ALPHANO_SUBMISSIONS = "alphano-submissions";
+
     public static final int BAD_REQUEST = 400;
     public static final int UNAUTHORIZED = 401;
     public static final int FORBIDDEN = 403;

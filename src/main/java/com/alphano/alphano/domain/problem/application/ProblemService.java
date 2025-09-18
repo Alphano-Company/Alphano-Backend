@@ -1,7 +1,10 @@
 package com.alphano.alphano.domain.problem.application;
 
+import com.alphano.alphano.common.application.S3Service;
+import com.alphano.alphano.common.dto.S3Response;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
+import com.alphano.alphano.domain.problem.dto.query.ProblemSummaryQuery;
 import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProblemService {
+    private final S3Service s3Service;
     private final ProblemRepository problemRepository;
 
     private static final int MAX_PAGE_SIZE = 50;
@@ -36,7 +40,16 @@ public class ProblemService {
                 sort
         );
 
-        return problemRepository.findAllSummary(pageable);
+        Page<ProblemSummaryQuery> page = problemRepository.findAllSummary(pageRequest);
+        return page.map(row -> {
+            String iconKey = row.iconKey();
+            S3Response iconImage = null;
+            if (iconKey != null && !iconKey.isBlank()) {
+                String url = s3Service.createPublicUrl(iconKey);
+                iconImage = S3Response.of(iconKey, url);
+            }
+            return ProblemSummaryResponse.from(row, iconImage);
+        });
     }
 
     /**

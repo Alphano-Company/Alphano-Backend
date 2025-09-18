@@ -30,7 +30,7 @@ public class Problem extends BaseTimeEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icon_image_id")
-    private ProblemImage iconImage;
+    private ProblemImage iconKey;
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
     private List<Submission> submissions = new ArrayList<>();

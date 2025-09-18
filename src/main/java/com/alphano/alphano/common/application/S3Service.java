@@ -12,14 +12,23 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.time.Duration;
 
+import static com.alphano.alphano.common.consts.AlphanoStatic.ALPHANO_PUBLIC;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3service {
+public class S3Service {
     private final S3Presigner s3Presigner;
 
-    @Value("${aws.s3.presigned.expire-minutes}")
+    @Value("${spring.cloud.aws.s3.presigned.expire-minutes}")
     private long expireMinutes;
+
+    @Value("${spring.cloud.aws.region.static}")
+    private String region;
+
+    public String createPublicUrl(String key) {
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", ALPHANO_PUBLIC, region, key);
+    }
 
     public String createPresignedGetUrl(String bucketName, String keyName) {
         try {
