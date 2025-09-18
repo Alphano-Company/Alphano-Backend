@@ -1,7 +1,10 @@
 package com.alphano.alphano.domain.problem.application;
 
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
+import com.alphano.alphano.domain.problem.domain.Problem;
+import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
+import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,5 +37,16 @@ public class ProblemService {
         );
 
         return problemRepository.findAllSummary(pageable);
+    }
+
+    /**
+     * 문제 상세 조회
+     * @param problemId
+     * @return
+     */
+    public ProblemDetailResponse getProblemDetail(Long problemId) {
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> ProblemNotFoundException.EXCEPTION);
+        return ProblemDetailResponse.from(problem);
     }
 }
