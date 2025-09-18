@@ -1,6 +1,7 @@
 package com.alphano.alphano.domain.problem.api;
 
 import com.alphano.alphano.domain.problem.application.ProblemService;
+import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +30,13 @@ public class ProblemController {
             Pageable pageable
     ) {
         return ResponseEntity.ok(problemService.getProblemSummary(pageable));
+    }
+
+    @GetMapping("/{problemId}")
+    @Operation(summary = "문제 상세 조회")
+    ResponseEntity<ProblemDetailResponse> getProblemDetail(
+            @PathVariable Long problemId
+    ) {
+        return ResponseEntity.ok(problemService.getProblemDetail(problemId));
     }
 }
