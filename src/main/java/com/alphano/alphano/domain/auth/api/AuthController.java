@@ -34,4 +34,12 @@ public class AuthController {
     ) {
         return ResponseEntity.ok(authService.login(request));
     }
+
+    /*
+    @PostMapping("/reissue")
+    @Operation(summary = "토큰 재발급")
+    ResponseEntity<> refresh(
+
+    )
+    */
 }

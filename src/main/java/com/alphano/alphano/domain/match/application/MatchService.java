@@ -28,13 +28,13 @@ public class MatchService {
     private final JudgeJobPublisher judgeJobPublisher;
     private final ProblemRepository problemRepository;
 
-    public MatchResponse create(Long problemId, @Valid MatchRequest request) {
+    public MatchResponse create(Long problemId, @Valid MatchRequest request, Long userId) {
         if (problemRepository.findById(problemId).isEmpty()) {
             throw ProblemNotFoundException.EXCEPTION;
         }
 
         Submission mine = submissionRepository
-                .findByIdAndUserId(request.submissionId(), request.agent1Id())
+                .findByIdAndUserId(request.submissionId(), userId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
         if (!Objects.equals(mine.getProblem().getId(), problemId)) {
             throw SubmissionProblemMismatchException.EXCEPTION;
@@ -42,7 +42,7 @@ public class MatchService {
 
         // 상대 선택
         Submission opp = submissionRepository
-                .findFirstByProblemIdAndUserIdNotOrderByIdDesc(problemId, request.agent1Id())
+                .findFirstByProblemIdAndUserIdNotOrderByIdDesc(problemId, userId)
                 .orElseThrow(() -> OpponentNotFoundException.EXCEPTION);
 
         if (mine.getCodeKey() == null || opp.getCodeKey() == null)
