@@ -17,7 +17,8 @@ public class ErrorResponseWriter {
     public void write(HttpServletResponse response, BaseErrorCode code) throws IOException {
         ErrorReason errorReason = code.getErrorReason();
         response.setStatus(errorReason.getStatus());
-        response.setContentType("application/json");
+        response.setContentType("application/json;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         objectMapper.writeValue(response.getWriter(), errorReason);
     }
 }
