@@ -7,8 +7,5 @@ public record SignupRequest (
         String identifier,
 
         @NotBlank
-        String password,
-
-        @NotBlank
-        String nickname
+        String password
 ) {}

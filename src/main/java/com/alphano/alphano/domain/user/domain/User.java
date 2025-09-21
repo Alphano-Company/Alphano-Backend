@@ -18,8 +18,7 @@ import java.util.List;
 @Table(
         name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_users_identifier", columnNames = "identifier"),
-                @UniqueConstraint(name = "uk_users_nickname", columnNames = "nickname")
+                @UniqueConstraint(name = "uk_users_identifier", columnNames = "identifier")
         }
 )
 public class User extends BaseTimeEntity {
@@ -30,7 +29,6 @@ public class User extends BaseTimeEntity {
     private String profileImageUrl;
     private String identifier;
     private String password;
-    private String nickname;
 
     @Enumerated(EnumType.STRING)
     private Role role;

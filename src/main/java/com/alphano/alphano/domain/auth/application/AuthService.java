@@ -1,19 +1,15 @@
 package com.alphano.alphano.domain.auth.application;
 
-import com.alphano.alphano.domain.auth.dto.AccessTokenResponse;
 import com.alphano.alphano.domain.auth.dto.LoginRequest;
 import com.alphano.alphano.domain.auth.dto.SignupRequest;
 import com.alphano.alphano.domain.auth.exception.IdentifierAlreadyExistsException;
 import com.alphano.alphano.domain.auth.exception.InvalidPasswordException;
-import com.alphano.alphano.domain.auth.exception.NicknameAlreadyExistsException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.Role;
 import com.alphano.alphano.domain.user.domain.User;
 import com.alphano.alphano.domain.user.dto.UserInfoResponse;
 import com.alphano.alphano.security.exception.IdentifierNotFoundException;
-import com.alphano.alphano.security.exception.InvalidTokenException;
 import com.alphano.alphano.security.jwt.JwtProvider;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,12 +39,11 @@ public class AuthService {
      */
     @Transactional
     public UserInfoResponse signup(SignupRequest request) {
-        validateIdentifierUnique(request.identifier(), request.nickname());
+        validateIdentifierUnique(request.identifier());
 
         User user = User.builder()
                 .identifier(request.identifier())
                 .password(passwordEncoder.encode(request.password()))
-                .nickname(request.nickname())
                 .role(Role.USER)
                 .build();
 
@@ -76,13 +71,9 @@ public class AuthService {
 
     // ===== Helper method =====//
 
-    private void validateIdentifierUnique(String identifier, String nickname) {
+    private void validateIdentifierUnique(String identifier) {
         if (userRepository.existsByIdentifier(identifier)) {
             throw IdentifierAlreadyExistsException.EXCEPTION;
-        }
-
-        if (userRepository.existsByNickname(nickname)) {
-            throw NicknameAlreadyExistsException.EXCEPTION;
         }
     }
 
