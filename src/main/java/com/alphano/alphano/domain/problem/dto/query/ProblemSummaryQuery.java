@@ -1,10 +1,17 @@
 package com.alphano.alphano.domain.problem.dto.query;
 
-public record ProblemSummaryQuery(
-        Long problemId,
-        String title,
-        int submissionCount,
-        int submitterCount,
-        String iconKey
-) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ProblemSummaryQuery {
+    private Long problemId;
+    private String title;
+    private Integer submissionCount;
+    private Integer submitterCount;
+    private String iconKey;
 }

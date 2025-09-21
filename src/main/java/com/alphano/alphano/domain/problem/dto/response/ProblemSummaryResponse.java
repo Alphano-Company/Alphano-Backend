@@ -12,10 +12,10 @@ public record ProblemSummaryResponse (
 ){
     public static ProblemSummaryResponse from(ProblemSummaryQuery query, S3Response iconImage) {
         return new ProblemSummaryResponse(
-                query.problemId(),
-                query.title(),
-                query.submissionCount(),
-                query.submitterCount(),
+                query.getProblemId(),
+                query.getTitle(),
+                query.getSubmissionCount(),
+                query.getSubmitterCount(),
                 iconImage
         );
     }
