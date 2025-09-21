@@ -21,6 +21,9 @@ spring:
     aws:
       region:
         static: ap-northeast-2
+      s3:
+        presigned:
+          expire-minutes:  15
       sns:
         topic:
           match-request: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-request

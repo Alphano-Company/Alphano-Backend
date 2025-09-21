@@ -1,7 +1,11 @@
 package com.alphano.alphano.domain.problem.application;
 
+import com.alphano.alphano.common.application.S3Service;
+import com.alphano.alphano.common.dto.S3Response;
+import com.alphano.alphano.domain.problem.dao.ProblemQueryRepository;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
+import com.alphano.alphano.domain.problem.dto.query.ProblemSummaryQuery;
 import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
@@ -17,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProblemService {
+    private final S3Service s3Service;
     private final ProblemRepository problemRepository;
+    private final ProblemQueryRepository problemQueryRepository;
 
     private static final int MAX_PAGE_SIZE = 50;
 
@@ -27,16 +33,22 @@ public class ProblemService {
      */
     public Page<ProblemSummaryResponse> getProblemSummary(Pageable pageable) {
         int pageSize = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
-        Sort sort = pageable.getSort().isUnsorted()
-                ? Sort.by(Sort.Direction.ASC, "id")
-                : pageable.getSort();
-        PageRequest pageRequest = PageRequest.of(
-                Math.max(0, pageable.getPageNumber()),
-                pageSize,
-                sort
-        );
+        int page = Math.max(0, pageable.getPageNumber());
 
-        return problemRepository.findAllSummary(pageable);
+        Sort sort = pageable.getSortOr(Sort.by(Sort.Order.asc("id")));
+        PageRequest pageRequest = PageRequest.of(page, pageSize, sort);
+
+        Page<ProblemSummaryQuery> result = problemQueryRepository.findAllSummary(pageRequest);
+
+        return result.map(row -> {
+            String iconKey = row.getIconKey();
+            S3Response iconImage = null;
+            if (iconKey != null && !iconKey.isBlank()) {
+                String url = s3Service.createPublicUrl(iconKey);
+                iconImage = S3Response.of(iconKey, url);
+            }
+            return ProblemSummaryResponse.from(row, iconImage);
+        });
     }
 
     /**

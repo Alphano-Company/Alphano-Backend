@@ -1,4 +1,13 @@
--- 문제 등록 (problem_id는 자동 생성)
+INSERT INTO problem_image (
+    image_key,
+    created_at,
+    updated_at
+) VALUES
+      ('problems/1/icons/problem_1_icon.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('problems/2/icons/problem_2_icon.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('problems/3/icons/problem_3_icon.png', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- 문제 등록
 INSERT INTO problem(
     title,
     content,
@@ -6,12 +15,13 @@ INSERT INTO problem(
     output_format,
     submission_count,
     submitter_count,
+    icon_image_id,
     created_at,
     updated_at
 ) VALUES
-      ('ATAXX', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 32, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      ('두 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 234, 12, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      ('세 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 45, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+      ('ATAXX', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 32, 2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('두 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 234, 12, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('세 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 45, 4, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 유저 등록 (user_id는 자동 생성)
 INSERT INTO users(

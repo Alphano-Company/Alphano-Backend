@@ -28,6 +28,10 @@ public class Problem extends BaseTimeEntity {
     private int submissionCount;
     private int submitterCount;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "icon_image_id")
+    private ProblemImage iconKey;
+
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
     private List<Submission> submissions = new ArrayList<>();
 

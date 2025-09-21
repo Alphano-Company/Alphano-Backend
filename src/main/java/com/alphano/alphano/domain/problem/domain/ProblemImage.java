@@ -19,4 +19,9 @@ public class ProblemImage extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
     private Problem problem;
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+        problem.getProblemImages().add(this);
+    }
 }
