@@ -5,11 +5,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record SignupRequest (
-        @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
-        @Size(min = 3, max = 20, message = "닉네임은 3자 이상 20자 이하여야 합니다.")
+        @NotBlank(message = "아이디는 필수 입력 항목입니다.")
+        @Size(min = 3, max = 20, message = "아이디는 3자 이상 20자 이하여야 합니다.")
         @Pattern(
                 regexp = "^[a-zA-Z0-9]+$",
-                message = "닉네임은 영문자와 숫자만 사용할 수 있습니다."
+                message = "아이디는 영문자와 숫자만 사용할 수 있습니다."
         )
         String identifier,
 
