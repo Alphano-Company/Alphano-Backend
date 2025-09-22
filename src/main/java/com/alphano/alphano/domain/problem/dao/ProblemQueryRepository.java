@@ -98,34 +98,7 @@ public class ProblemQueryRepository {
     public List<HomeProblemQuery> findPopularProblems(int limit) {
         QProblem problem = QProblem.problem;
         QProblemImage problemImage = QProblemImage.problemImage;
-        QUserRating userRating = QUserRating.userRating;
-        QUserRating topRating = new QUserRating("topRating");
-        QUserRating topWin = new QUserRating("topWin");
-
-        // 문제별 최고 레이팅
-        JPQLQuery<Integer> maxRating =
-                JPAExpressions.select(topRating.rating.max())
-                        .from(topRating)
-                        .where(topRating.problem.eq(problem));
-
-        // 최고 레이팅에서의 최고 승수
-        JPQLQuery<Integer> maxWinAtTopRating =
-                JPAExpressions.select(topWin.win.max())
-                        .from(topWin)
-                        .where(
-                                topWin.problem.eq(problem),
-                                topWin.rating.eq(maxRating)
-                        );
-
-        // 해당 유저 찾기
-        JPQLQuery<String> topIdentifier =
-                JPAExpressions.select(userRating.user.identifier.min())
-                        .from(userRating)
-                        .where(
-                                userRating.problem.eq(problem),
-                                userRating.rating.eq(maxRating),
-                                userRating.win.eq(maxWinAtTopRating)
-                        );
+        JPQLQuery<String> topIdentifier = getTopIdentifier(problem);
 
         return queryFactory
                 .select(Projections.constructor(HomeProblemQuery.class,
@@ -147,6 +120,27 @@ public class ProblemQueryRepository {
     public HomeProblemQuery findRecentProblem() {
         QProblem problem = QProblem.problem;
         QProblemImage problemImage = QProblemImage.problemImage;
+        JPQLQuery<String> topIdentifier = getTopIdentifier(problem);
+
+
+        return queryFactory
+                .select(Projections.constructor(HomeProblemQuery.class,
+                        problem.id,
+                        problem.title,
+                        problem.submissionCount,
+                        problem.submitterCount,
+                        topIdentifier,
+                        problem.description,
+                        problemImage.imageKey
+                ))
+                .from(problem)
+                .leftJoin(problem.iconKey, problemImage)
+                .orderBy(problem.createdAt.desc())
+                .limit(1)
+                .fetchOne();
+    }
+
+    private JPQLQuery<String> getTopIdentifier(QProblem problem) {
         QUserRating userRating = QUserRating.userRating;
         QUserRating topRating = new QUserRating("topRating");
         QUserRating topWin = new QUserRating("topWin");
@@ -167,29 +161,12 @@ public class ProblemQueryRepository {
                         );
 
         // 해당 유저 찾기
-        JPQLQuery<String> topIdentifier =
-                JPAExpressions.select(userRating.user.identifier.min())
-                        .from(userRating)
-                        .where(
-                                userRating.problem.eq(problem),
-                                userRating.rating.eq(maxRating),
-                                userRating.win.eq(maxWinAtTopRating)
-                        );
-
-        return queryFactory
-                .select(Projections.constructor(HomeProblemQuery.class,
-                        problem.id,
-                        problem.title,
-                        problem.submissionCount,
-                        problem.submitterCount,
-                        topIdentifier,
-                        problem.description,
-                        problemImage.imageKey
-                ))
-                .from(problem)
-                .leftJoin(problem.iconKey, problemImage)
-                .orderBy(problem.createdAt.desc())
-                .limit(1)
-                .fetchOne();
+        return JPAExpressions.select(userRating.user.identifier.min())
+                .from(userRating)
+                .where(
+                        userRating.problem.eq(problem),
+                        userRating.rating.eq(maxRating),
+                        userRating.win.eq(maxWinAtTopRating)
+                );
     }
 }
