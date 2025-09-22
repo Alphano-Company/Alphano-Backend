@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,32 +142,44 @@ public class ProblemQueryRepository {
     }
 
     private JPQLQuery<String> getTopIdentifier(QProblem problem) {
-        QUserRating userRating = QUserRating.userRating;
-        QUserRating topRating = new QUserRating("topRating");
-        QUserRating topWin = new QUserRating("topWin");
+        QUserRating ur = QUserRating.userRating;
 
-        // 문제별 최고 레이팅
+        QUserRating urForMaxRating = new QUserRating("urForMaxRating");
+        QUserRating urForMaxWin = new QUserRating("urForMaxWin");
+        QUserRating urForEarliest = new QUserRating("urForEarliest");
+
+        // 최고 레이팅
         JPQLQuery<Integer> maxRating =
-                JPAExpressions.select(topRating.rating.max())
-                        .from(topRating)
-                        .where(topRating.problem.eq(problem));
+                JPAExpressions.select(urForMaxRating.rating.max())
+                        .from(urForMaxRating)
+                        .where(urForMaxRating.problem.eq(problem));
 
-        // 최고 레이팅에서의 최고 승수
-        JPQLQuery<Integer> maxWinAtTopRating =
-                JPAExpressions.select(topWin.win.max())
-                        .from(topWin)
+        // 최고 승수
+        JPQLQuery<Integer> maxWinAtMaxRating =
+                JPAExpressions.select(urForMaxWin.win.max())
+                        .from(urForMaxWin)
                         .where(
-                                topWin.problem.eq(problem),
-                                topWin.rating.eq(maxRating)
+                                urForMaxWin.problem.eq(problem),
+                                urForMaxWin.rating.eq(maxRating)
                         );
 
-        // 해당 유저 찾기
-        return JPAExpressions.select(userRating.user.identifier.min())
-                .from(userRating)
+        // 가장 이른 시각
+        JPQLQuery<LocalDateTime> earliestAtTie =
+                JPAExpressions.select(urForEarliest.updatedAt.min())
+                        .from(urForEarliest)
+                        .where(
+                                urForEarliest.problem.eq(problem),
+                                urForEarliest.rating.eq(maxRating),
+                                urForEarliest.win.eq(maxWinAtMaxRating)
+                        );
+
+        return JPAExpressions.select(ur.user.identifier.min())
+                .from(ur)
                 .where(
-                        userRating.problem.eq(problem),
-                        userRating.rating.eq(maxRating),
-                        userRating.win.eq(maxWinAtTopRating)
+                        ur.problem.eq(problem),
+                        ur.rating.eq(maxRating),
+                        ur.win.eq(maxWinAtMaxRating),
+                        ur.updatedAt.eq(earliestAtTie)
                 );
     }
 }
