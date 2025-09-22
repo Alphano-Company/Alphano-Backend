@@ -6,6 +6,7 @@ import com.alphano.alphano.domain.problem.dao.ProblemQueryRepository;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.problem.dto.query.ProblemSummaryQuery;
+import com.alphano.alphano.domain.problem.dto.response.PopularProblemResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +63,16 @@ public class ProblemService {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> ProblemNotFoundException.EXCEPTION);
         return ProblemDetailResponse.from(problem);
+    }
+
+    /**
+     * 인기 있는 문제 목록 조회
+     * @return 인기 문제 상위 3개 리스트
+     */
+    public List<PopularProblemResponse> getPopularProblem() {
+        int limit = 3;  // 상위 인기 문제 개수
+        return problemQueryRepository.findPopularProblems(limit).stream()
+                .map(query -> PopularProblemResponse.from(query, s3Service))
+                .toList();
     }
 }

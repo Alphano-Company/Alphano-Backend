@@ -27,6 +27,7 @@ public class Problem extends BaseTimeEntity {
     private String outputFormat;
     private int submissionCount;
     private int submitterCount;
+    private String description;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icon_image_id")
