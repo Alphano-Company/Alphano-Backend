@@ -19,8 +19,8 @@ INSERT INTO problem(
     created_at,
     updated_at
 ) VALUES
-      ('ATAXX', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 32, 2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      ('두 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 234, 12, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      ('ATAXX', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 32, 2, 1, CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      ('두 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 234, 12, 2, CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
       ('세 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 45, 4, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- 유저 등록 (user_id는 자동 생성)

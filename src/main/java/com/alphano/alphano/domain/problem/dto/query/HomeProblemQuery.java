@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PopularProblemQuery {
+public class HomeProblemQuery {
     private Long problemId;
     private String title;
     private Integer submissionCount;

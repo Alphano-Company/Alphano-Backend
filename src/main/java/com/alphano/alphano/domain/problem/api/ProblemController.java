@@ -1,7 +1,7 @@
 package com.alphano.alphano.domain.problem.api;
 
 import com.alphano.alphano.domain.problem.application.ProblemService;
-import com.alphano.alphano.domain.problem.dto.response.PopularProblemResponse;
+import com.alphano.alphano.domain.problem.dto.response.HomeProblemResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemDetailResponse;
 import com.alphano.alphano.domain.problem.dto.response.ProblemSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,7 +45,13 @@ public class ProblemController {
 
     @GetMapping("/popular")
     @Operation(summary = "인기 있는 문제 조회")
-    ResponseEntity<List<PopularProblemResponse>> getPopularProblemSummary() {
+    ResponseEntity<List<HomeProblemResponse>> getPopularProblem() {
         return ResponseEntity.ok(problemService.getPopularProblem());
+    }
+
+    @GetMapping("/recent")
+    @Operation(summary = "최근에 추가된 문제 조회")
+    ResponseEntity<HomeProblemResponse> getRecentProblem() {
+        return ResponseEntity.ok(problemService.getRecentProblem());
     }
 }
