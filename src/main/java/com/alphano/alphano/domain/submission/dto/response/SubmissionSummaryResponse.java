@@ -9,6 +9,7 @@ public record SubmissionSummaryResponse(
        Integer win,
        Integer lose,
        Integer draw,
+       String language,
        Integer codeLength,
        LocalDateTime createdAt,
        boolean isDefault
@@ -19,6 +20,7 @@ public record SubmissionSummaryResponse(
                 submission.getWin(),
                 submission.getLose(),
                 submission.getDraw(),
+                submission.getLanguage(),
                 submission.getCodeLength(),
                 submission.getCreatedAt(),
                 submission.isDefault()
