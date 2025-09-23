@@ -27,6 +27,7 @@ public class Submission extends BaseTimeEntity {
     private Integer lose;
     private Integer draw;
     private String codeKey;
+    private Integer codeLength;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
