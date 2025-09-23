@@ -28,7 +28,7 @@ public class ProblemLeaderboardService {
      * @return
      */
     public Page<LeaderboardResponse> getLeaderboard(Long problemId, Pageable pageable) {
-        if (problemRepository.findById(problemId).isEmpty()) {
+        if (!problemRepository.existsById(problemId)) {
             throw ProblemNotFoundException.EXCEPTION;
         }
 
