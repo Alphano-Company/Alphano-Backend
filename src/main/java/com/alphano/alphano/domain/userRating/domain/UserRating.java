@@ -22,7 +22,7 @@ public class UserRating extends BaseTimeEntity {
     private Integer lose;
     private Integer draw;
     private Integer winStreak;
-    private Integer BestWinStreak;
+    private Integer bestWinStreak;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
