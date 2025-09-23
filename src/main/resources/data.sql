@@ -25,7 +25,7 @@ INSERT INTO problem(
 
 -- 유저 등록 (user_id는 자동 생성)
 INSERT INTO users(
-    profile_image_url,
+    profile_image_key,
     identifier,
     password,
     created_at,

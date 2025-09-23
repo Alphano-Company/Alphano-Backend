@@ -26,7 +26,7 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
-    private String profileImageUrl;
+    private String profileImageKey;
     private String identifier;
     private String password;
 
