@@ -1,6 +1,7 @@
 package com.alphano.alphano.domain.submission.api;
 
 import com.alphano.alphano.domain.submission.application.SubmissionService;
+import com.alphano.alphano.domain.submission.dto.response.SubmissionDetailResponse;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
 import com.alphano.alphano.security.principal.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,5 +36,14 @@ public class SubmissionController {
     ) {
         Long userId = userDetails.getUserId();
         return ResponseEntity.ok(submissionService.getAllSubmissions(userId, problemId, pageable));
+    }
+
+    @GetMapping("/submissions/{submissionId}")
+    @Operation(summary = "제출 상세 조회")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<SubmissionDetailResponse> getSubmissionDetail(
+            @PathVariable Long submissionId
+    ) {
+        return ResponseEntity.ok(submissionService.getSubmissionDetail(submissionId));
     }
 }

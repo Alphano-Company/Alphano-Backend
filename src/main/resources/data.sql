@@ -67,7 +67,7 @@ INSERT INTO submission(
     created_at,
     updated_at
 ) VALUES
-      (1, 1, 'c++', true, 4, 0, 0, 'key1', CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
-      (1, 1, 'c++', false, 1, 4, 3, 'key1', CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
+      (1, 1, 'c++', true, 4, 0, 0, 'submissions/1/1/1/sample.cpp', CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (1, 1, 'python', false, 1, 4, 3, 'key2', CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
       (1, 1, 'c++', false, 5, 6, 5, 'key1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      (2, 1, 'c++', true, 0, 0, 0, 'key2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+      (2, 1, 'python', true, 0, 0, 0, 'submissions/1/2/4/sample.py', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
