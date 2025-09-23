@@ -42,8 +42,10 @@ public class SubmissionController {
     @Operation(summary = "제출 상세 조회")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<SubmissionDetailResponse> getSubmissionDetail(
-            @PathVariable Long submissionId
+            @PathVariable Long submissionId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return ResponseEntity.ok(submissionService.getSubmissionDetail(submissionId));
+        Long userId = userDetails.getUserId();
+        return ResponseEntity.ok(submissionService.getSubmissionDetail(userId, submissionId));
     }
 }

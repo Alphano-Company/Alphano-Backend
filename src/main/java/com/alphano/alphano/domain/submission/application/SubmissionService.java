@@ -8,14 +8,13 @@ import com.alphano.alphano.domain.submission.dao.SubmissionRepository;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionDetailResponse;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
+import com.alphano.alphano.domain.submission.exception.SubmissionForbiddenException;
 import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +33,14 @@ public class SubmissionService {
         return submissionQueryRepository.getSubmissionsSummary(userId, problemId, pageable);
     }
 
-    public SubmissionDetailResponse getSubmissionDetail(Long submissionId) {
+    public SubmissionDetailResponse getSubmissionDetail(Long userId, Long submissionId) {
         Submission submission = submissionRepository.findById(submissionId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
+
+        if (!userId.equals(submission.getUser().getId())) {
+            throw SubmissionForbiddenException.EXCEPTION;
+        }
+
         return SubmissionDetailResponse.from(submission, s3Service);
     }
 }
