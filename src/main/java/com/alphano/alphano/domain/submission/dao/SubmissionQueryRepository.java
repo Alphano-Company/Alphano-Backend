@@ -27,6 +27,7 @@ public class SubmissionQueryRepository {
                         submission.win,
                         submission.lose,
                         submission.draw,
+                        submission.language,
                         submission.codeLength,
                         submission.createdAt,
                         submission.isDefault
