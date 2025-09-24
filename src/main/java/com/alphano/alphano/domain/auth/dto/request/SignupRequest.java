@@ -1,5 +1,6 @@
-package com.alphano.alphano.domain.auth.dto;
+package com.alphano.alphano.domain.auth.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -19,5 +20,9 @@ public record SignupRequest (
                 regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=\\S+$).*",
                 message = "비밀번호는 영문자와 숫자를 반드시 포함해야 하며 공백은 사용할 수 없습니다."
         )
-        String password
+        String password,
+
+        @NotBlank(message = "이메일은 필수 입력 항목입니다.")
+        @Email(message = "유효한 이메일 형식이 아닙니다.")
+        String email
 ) {}

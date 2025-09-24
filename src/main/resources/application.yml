@@ -33,6 +33,15 @@ spring:
           backend: alphano-BackendQueue
           match-worker: alphano-MatchWorkerQueue
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS}
+    password: ${APP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
 jwt:
   # 개발용
   secret: 4dc310ff43f20d5dcd9fd9ac7b37e9f0b3b2927bb618195a3f93d47d3cbec8b6c311e2d6f221fbbe0f2cb9534400b94881ee88d71aff746e4b2d2e6fba8ee857

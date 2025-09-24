@@ -4,12 +4,14 @@ import com.alphano.alphano.common.dto.ErrorReason;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import static com.alphano.alphano.common.consts.AlphanoStatic.BAD_GATEWAY;
 import static com.alphano.alphano.common.consts.AlphanoStatic.INTERNAL_SERVER;
 
 @Getter
 @AllArgsConstructor
 public enum GlobalErrorCode implements BaseErrorCode {
-    INTERNAL_SERVER_ERROR(INTERNAL_SERVER, "GLOBAL_500", "서버 오류");
+    INTERNAL_SERVER_ERROR(INTERNAL_SERVER, "GLOBAL_500", "서버 오류"),
+    UNABLE_TO_SEND_EMAIL(BAD_GATEWAY, "Unable_To_Send_Email", "메일 전송에 실패했습니다.");
 
     private Integer status;
     private String code;
