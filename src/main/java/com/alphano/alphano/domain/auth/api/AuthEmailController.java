@@ -24,7 +24,7 @@ public class AuthEmailController {
     @PostMapping("/send")
     public ResponseEntity<Void> send(@Valid @RequestBody EmailSendRequest request) {
         mailVerificationService.sendCodeForSignUp(request.email());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/verify")

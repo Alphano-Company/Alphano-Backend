@@ -1,5 +1,6 @@
 package com.alphano.alphano.common.application;
 
+import com.alphano.alphano.common.exception.InvalidOrExpiredException;
 import com.alphano.alphano.common.exception.TooManyEmailRequestsException;
 import com.alphano.alphano.common.infra.mail.MailTemplates;
 import com.alphano.alphano.domain.auth.exception.EmailAlreadyExistsException;
@@ -21,6 +22,7 @@ public class MailVerificationService {
     private static final String KEY_THROTTLE_SEND  = "auth:throttle:send:";   // email -> 발송 횟수
     private static final String KEY_VERIFIED_TOKEN = "auth:verified-token:";  // token -> email
     private static final SecureRandom secureRandom = new SecureRandom();
+    private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder().withoutPadding();
 
     private final RedisService redis;
     private final MailService mailService;
@@ -33,7 +35,10 @@ public class MailVerificationService {
     @Value("${auth.verified-token.ttl-seconds:900}") private long verifiedTokenTtlSeconds;  // 토큰 유효시간 : 900초
     @Value("${service.display-name:알파노 컴퍼니}")  private String serviceName;              // 메일에 노출할 서비스명
 
-    // /auth/email/send
+    /**
+     * 이메일로 인증코드 발송
+     * @param email
+     */
     @Transactional
     public void sendCodeForSignUp(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
@@ -54,6 +59,38 @@ public class MailVerificationService {
         mailService.sendMail(email, subject, text, html);
     }
 
+    /**
+     * 코드 일치 시 일회용 토큰 발급 후 반환
+     * @param email
+     * @param inputCode
+     * @return
+     */
+    @Transactional
+    public VerifiedToken verifyCode(String email, String inputCode) {
+        String key   = KEY_CODE + email;
+        String saved = redis.get(key);
+        if (saved != null && saved.equals(inputCode)) {
+            redis.delete(key);
+
+            String token = generateOpaqueToken(32);
+            redis.set(KEY_VERIFIED_TOKEN + token, email, Duration.ofSeconds(verifiedTokenTtlSeconds));
+
+            return new VerifiedToken(token, verifiedTokenTtlSeconds);
+        }
+        throw InvalidOrExpiredException.EXCEPTION;
+    }
+
+    @Transactional
+    public String consumeVerifiedToken(String token) {
+        String key = KEY_VERIFIED_TOKEN + token;
+        String email = redis.get(key);
+        if (email != null) {
+            redis.delete(key); // 일회성 사용
+            return email;
+        }
+        throw InvalidOrExpiredException.EXCEPTION;
+    }
+
     private String generateCode(int len) {
         StringBuilder stringBuilder = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
@@ -64,8 +101,8 @@ public class MailVerificationService {
 
     private String generateOpaqueToken(int numBytes) {
         byte[] buf = new byte[numBytes];
-        new SecureRandom().nextBytes(buf);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(buf);
+        secureRandom.nextBytes(buf);
+        return base64Encoder.encodeToString(buf);
     }
 
     public record VerifiedToken(String value, long ttlSeconds) {}

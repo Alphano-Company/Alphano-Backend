@@ -13,7 +13,8 @@ public enum GlobalErrorCode implements BaseErrorCode {
 
     // Email
     UNABLE_TO_SEND_EMAIL(BAD_GATEWAY, "Unable_To_Send_Email", "메일 전송에 실패했습니다."),
-    TOO_MANY_EMAIL_REQUESTS(TOO_MANY_REQUESTS, "Too_Many_Email_Requests", "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.");
+    TOO_MANY_EMAIL_REQUESTS(TOO_MANY_REQUESTS, "Too_Many_Email_Requests", "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."),
+    INVALID_OR_EXPIRED_CODE(UNPROCESSABLE_ENTITY, "Invalid_Or_Expired_Code", "인증 코드가 만료되었거나 올바르지 않습니다.");
 
     private Integer status;
     private String code;
