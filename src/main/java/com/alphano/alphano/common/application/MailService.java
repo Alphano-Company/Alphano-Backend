@@ -28,7 +28,7 @@ public class MailService {
         try {
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(from, "알파노 컴퍼니");
+            helper.setFrom(from, "ALPHANO");
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(textBody, htmlBody);

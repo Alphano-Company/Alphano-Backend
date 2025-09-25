@@ -33,7 +33,7 @@ public class MailVerificationService {
     @Value("${auth.send.max-per-window:5}")         private int  maxPerWindow;              // 동일 이메일에 대해 인증 코드 발송 횟수
     @Value("${auth.send.window-seconds:300}")       private long windowSeconds;             // 발송 최대 횟수가 적용되는 시간
     @Value("${auth.verified-token.ttl-seconds:900}") private long verifiedTokenTtlSeconds;  // 토큰 유효시간 : 900초
-    @Value("${service.display-name:알파노 컴퍼니}")  private String serviceName;              // 메일에 노출할 서비스명
+    @Value("${service.display-name:ALPHANO}")  private String serviceName;              // 메일에 노출할 서비스명
 
     /**
      * 이메일로 인증코드 발송
