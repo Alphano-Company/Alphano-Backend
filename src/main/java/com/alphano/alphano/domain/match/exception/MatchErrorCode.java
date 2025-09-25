@@ -1,11 +1,10 @@
 package com.alphano.alphano.domain.match.exception;
 
-import com.alphano.alphano.common.dto.ErrorReason;
+import com.alphano.alphano.common.dto.response.ErrorReason;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.alphano.alphano.common.consts.AlphanoStatic.BAD_REQUEST;
 import static com.alphano.alphano.common.consts.AlphanoStatic.NOT_FOUND;
 
 @Getter

@@ -24,14 +24,14 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String from;
 
-    public void sendMail(String to, String subject, String htmlBody) {
+    public void sendMail(String to, String subject, String textBody, String htmlBody) {
         try {
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, false, StandardCharsets.UTF_8.name());
             helper.setFrom(from, "알파노 컴퍼니");
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(htmlBody, true); // true = HTML
+            helper.setText(textBody, htmlBody);
             mailSender.send(mime);
         } catch (MessagingException | MailException | UnsupportedEncodingException e) {
             log.warn("Mail send failed. to={}, subject={}, cause={}", to, subject, e.toString());

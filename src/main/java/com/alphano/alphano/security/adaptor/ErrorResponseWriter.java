@@ -1,6 +1,6 @@
 package com.alphano.alphano.security.adaptor;
 
-import com.alphano.alphano.common.dto.ErrorReason;
+import com.alphano.alphano.common.dto.response.ErrorReason;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,7 +1,7 @@
 package com.alphano.alphano.domain.problem.application;
 
 import com.alphano.alphano.common.application.S3Service;
-import com.alphano.alphano.common.dto.S3Response;
+import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.domain.problem.dao.ProblemQueryRepository;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;

@@ -1,4 +1,4 @@
-package com.alphano.alphano.common.dto;
+package com.alphano.alphano.common.dto.response;
 
 public record S3Response(
         String key,

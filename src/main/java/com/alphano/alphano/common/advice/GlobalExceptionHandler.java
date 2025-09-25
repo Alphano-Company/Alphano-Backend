@@ -1,7 +1,7 @@
 package com.alphano.alphano.common.advice;
 
-import com.alphano.alphano.common.dto.ErrorReason;
-import com.alphano.alphano.common.dto.ErrorResponse;
+import com.alphano.alphano.common.dto.response.ErrorReason;
+import com.alphano.alphano.common.dto.response.ErrorResponse;
 import com.alphano.alphano.common.exception.AlphanoCodeException;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import com.alphano.alphano.common.exception.GlobalErrorCode;

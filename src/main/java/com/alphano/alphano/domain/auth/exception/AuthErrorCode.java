@@ -1,6 +1,6 @@
 package com.alphano.alphano.domain.auth.exception;
 
-import com.alphano.alphano.common.dto.ErrorReason;
+import com.alphano.alphano.common.dto.response.ErrorReason;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,7 @@ import static com.alphano.alphano.common.consts.AlphanoStatic.*;
 @AllArgsConstructor
 public enum AuthErrorCode implements BaseErrorCode {
     IDENTIFIER_ALREADY_EXISTS(BAD_REQUEST, "Identifier_Already_Exists", "이미 사용 중인 아이디입니다."),
+    EMAIL_ALREADY_EXISTS(BAD_REQUEST, "Email_Already_Exists", "이미 가입된 이메일입니다."),
     INVALID_PASSWORD(UNAUTHORIZED, "Invalid_Password", "비밀번호가 일치하지 않습니다.");
 
     private Integer status;

@@ -1,7 +1,7 @@
 package com.alphano.alphano.domain.submission.dto.response;
 
 import com.alphano.alphano.common.application.S3Service;
-import com.alphano.alphano.common.dto.S3Response;
+import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.domain.submission.domain.Submission;
 
 import java.time.LocalDateTime;

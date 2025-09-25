@@ -1,7 +1,7 @@
 package com.alphano.alphano.domain.problem.dto.response;
 
 import com.alphano.alphano.common.application.S3Service;
-import com.alphano.alphano.common.dto.S3Response;
+import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.domain.problem.dto.query.HomeProblemQuery;
 
 public record HomeProblemResponse(

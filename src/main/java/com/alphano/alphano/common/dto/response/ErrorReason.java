@@ -1,4 +1,4 @@
-package com.alphano.alphano.common.dto;
+package com.alphano.alphano.common.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
