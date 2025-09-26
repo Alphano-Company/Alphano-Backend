@@ -1,7 +1,9 @@
 package com.alphano.alphano.domain.auth.application;
 
+import com.alphano.alphano.common.application.MailVerificationService;
 import com.alphano.alphano.domain.auth.dto.request.LoginRequest;
 import com.alphano.alphano.domain.auth.dto.request.SignupRequest;
+import com.alphano.alphano.domain.auth.exception.EmailAlreadyExistsException;
 import com.alphano.alphano.domain.auth.exception.IdentifierAlreadyExistsException;
 import com.alphano.alphano.domain.auth.exception.InvalidPasswordException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
@@ -25,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final MailVerificationService mailVerificationService;
 
     @Value("${jwt.expiration.access}")
     private long accessTtl;
@@ -39,12 +42,14 @@ public class AuthService {
      */
     @Transactional
     public UserInfoResponse signup(SignupRequest request) {
+        String email = mailVerificationService.consumeVerifiedToken(request.token());
+        validateEmailUnique(email);
         validateIdentifierUnique(request.identifier());
 
         User user = User.builder()
                 .identifier(request.identifier())
                 .password(passwordEncoder.encode(request.password()))
-                .email(request.email())
+                .email(email)
                 .role(Role.USER)
                 .build();
 
@@ -75,6 +80,12 @@ public class AuthService {
     private void validateIdentifierUnique(String identifier) {
         if (userRepository.existsByIdentifier(identifier)) {
             throw IdentifierAlreadyExistsException.EXCEPTION;
+        }
+    }
+
+    private void validateEmailUnique(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw EmailAlreadyExistsException.EXCEPTION;
         }
     }
 

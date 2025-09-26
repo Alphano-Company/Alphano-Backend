@@ -22,7 +22,6 @@ public record SignupRequest (
         )
         String password,
 
-        @NotBlank(message = "이메일은 필수 입력 항목입니다.")
-        @Email(message = "유효한 이메일 형식이 아닙니다.")
-        String email
+        @NotBlank(message = "이메일 인증 토큰은 필수입니다.")
+        String token
 ) {}
