@@ -1,6 +1,6 @@
 package com.alphano.alphano.common.advice;
 
-import com.alphano.alphano.common.dto.SuccessResponse;
+import com.alphano.alphano.common.dto.response.SuccessResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

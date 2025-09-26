@@ -1,6 +1,6 @@
 package com.alphano.alphano.security.exception;
 
-import com.alphano.alphano.common.dto.ErrorReason;
+import com.alphano.alphano.common.dto.response.ErrorReason;
 import com.alphano.alphano.common.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

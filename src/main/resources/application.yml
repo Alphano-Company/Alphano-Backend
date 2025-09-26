@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:h2:tcp://localhost/~/alphano
     username: sa
@@ -12,6 +15,11 @@ spring:
       hibernate:
         format_sql: true
     defer-datasource-initialization: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
   sql:
     init:
@@ -32,6 +40,15 @@ spring:
         queues:
           backend: alphano-BackendQueue
           match-worker: alphano-MatchWorkerQueue
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS}
+    password: ${APP_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 jwt:
   # 개발용

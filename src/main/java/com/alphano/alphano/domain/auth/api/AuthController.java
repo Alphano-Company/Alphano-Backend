@@ -1,8 +1,8 @@
 package com.alphano.alphano.domain.auth.api;
 
 import com.alphano.alphano.domain.auth.application.AuthService;
-import com.alphano.alphano.domain.auth.dto.LoginRequest;
-import com.alphano.alphano.domain.auth.dto.SignupRequest;
+import com.alphano.alphano.domain.auth.dto.request.LoginRequest;
+import com.alphano.alphano.domain.auth.dto.request.SignupRequest;
 import com.alphano.alphano.domain.user.dto.UserInfoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

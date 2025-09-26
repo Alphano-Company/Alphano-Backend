@@ -1,4 +1,4 @@
-package com.alphano.alphano.common.dto;
+package com.alphano.alphano.common.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
