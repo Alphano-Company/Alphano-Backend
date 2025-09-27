@@ -1,6 +1,7 @@
 package com.alphano.alphano.domain.submission.dao;
 
 import com.alphano.alphano.domain.submission.domain.QSubmission;
+import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -12,6 +13,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -56,5 +58,19 @@ public class SubmissionQueryRepository {
                 );
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    public Optional<Submission> getDefaultSubmission(Long problemId, Long userId) {
+        QSubmission submission = QSubmission.submission;
+        return Optional.ofNullable(
+                queryFactory.select(submission)
+                        .where(
+                                submission.problem.id.eq(problemId),
+                                submission.user.id.eq(userId),
+                                submission.isDefault.isTrue()
+                        )
+                        .orderBy(submission.id.desc())
+                        .fetchFirst()
+        );
     }
 }

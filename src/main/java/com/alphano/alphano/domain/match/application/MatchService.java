@@ -2,22 +2,19 @@ package com.alphano.alphano.domain.match.application;
 
 import com.alphano.alphano.domain.match.domain.MatchStatus;
 import com.alphano.alphano.domain.match.dto.MatchJobMessage;
-import com.alphano.alphano.domain.match.dto.request.MatchRequest;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
 import com.alphano.alphano.domain.match.exception.OpponentNotFoundException;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
+import com.alphano.alphano.domain.submission.dao.SubmissionQueryRepository;
 import com.alphano.alphano.domain.submission.dao.SubmissionRepository;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.exception.SubmissionCodeKeyMissingException;
 import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundException;
-import com.alphano.alphano.domain.submission.exception.SubmissionProblemMismatchException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -27,30 +24,17 @@ public class MatchService {
     private final SubmissionRepository submissionRepository;
     private final JudgeJobPublisher judgeJobPublisher;
     private final ProblemRepository problemRepository;
+    private final SubmissionQueryRepository submissionQueryRepository;
 
     public MatchResponse create(Long problemId, Long userId) {
         if (problemRepository.findById(problemId).isEmpty()) {
             throw ProblemNotFoundException.EXCEPTION;
         }
 
-        Long submissionId = null;
-        var submissions = submissionRepository.findAll();
-        for (var submission : submissions) {
-            if (submission.getProblem().getId().equals(problemId)
-            && submission.getUser().getId().equals(userId)
-            && submission.isDefault()) {
-                submissionId = submission.getId();
-            }
-        }
-
-        Submission mine = submissionRepository
-                .findByIdAndUserId(submissionId, userId)
+        Submission mine = submissionQueryRepository.getDefaultSubmission(problemId, userId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
-        if (!Objects.equals(mine.getProblem().getId(), problemId)) {
-            throw SubmissionProblemMismatchException.EXCEPTION;
-        }
 
-        // 상대 선택
+        // 상대 선택 : 수정 예정
         Submission opp = submissionRepository
                 .findFirstByProblemIdAndUserIdNotOrderByIdDesc(problemId, userId)
                 .orElseThrow(() -> OpponentNotFoundException.EXCEPTION);
