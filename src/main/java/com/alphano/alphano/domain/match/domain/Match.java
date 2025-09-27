@@ -5,22 +5,22 @@ import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.userRatingHistory.domain.UserHistory;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Match  extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "match_id")
     private Long id;
 
-    private String log;
+    private String logKey;
 
     @Enumerated(EnumType.STRING)
     private MatchStatus status;
@@ -41,6 +41,7 @@ public class Match  extends BaseTimeEntity {
     private Long agent2Id;
 
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<UserHistory> userHistories = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,4 +55,16 @@ public class Match  extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agent2_submit_id")
     private Submission agent2Submission;
+
+    public static Match createQueuedMatch(Problem problem, Submission mine, Submission opp, int seed) {
+        return Match.builder()
+                .status(MatchStatus.QUEUED)
+                .randomSeed(seed)
+                .agent1Id(mine.getUser().getId())
+                .agent2Id(opp.getUser().getId())
+                .problem(problem)
+                .agent1Submission(mine)
+                .agent2Submission(opp)
+                .build();
+    }
 }

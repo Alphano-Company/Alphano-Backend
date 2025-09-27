@@ -2,6 +2,7 @@ package com.alphano.alphano.domain.match.dto;
 
 public record MatchJobMessage (
         Long problemId,
+        Long matchId,
         int randomSeed,
         Agent agent1,
         Agent agent2

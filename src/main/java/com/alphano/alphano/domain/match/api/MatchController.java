@@ -1,7 +1,6 @@
 package com.alphano.alphano.domain.match.api;
 
 import com.alphano.alphano.domain.match.application.MatchService;
-import com.alphano.alphano.domain.match.dto.request.MatchRequest;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
 import com.alphano.alphano.security.principal.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,12 +28,11 @@ public class MatchController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MatchResponse> createMatch(
             @PathVariable Long problemId,
-            @RequestBody @Valid MatchRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUserId();
         // System.out.println("userId : " + userId);
-        MatchResponse response = matchService.create(problemId, request, userId);
+        MatchResponse response = matchService.create(problemId, userId);
         return ResponseEntity.ok(response);
     }
 }
