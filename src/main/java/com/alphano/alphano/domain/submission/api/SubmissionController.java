@@ -11,12 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SubmissionController {
@@ -47,5 +42,17 @@ public class SubmissionController {
     ) {
         Long userId = userDetails.getUserId();
         return ResponseEntity.ok(submissionService.getSubmissionDetail(userId, submissionId));
+    }
+
+    @PatchMapping("/submissions/{submissionId}")
+    @Operation(summary = "대표 코드로 설정")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> updateSubmission(
+            @PathVariable Long submissionId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+        submissionService.setDefaultSubmission(userId, submissionId);
+        return ResponseEntity.ok().build();
     }
 }
