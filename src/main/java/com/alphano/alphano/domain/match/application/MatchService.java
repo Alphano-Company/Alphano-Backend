@@ -28,13 +28,23 @@ public class MatchService {
     private final JudgeJobPublisher judgeJobPublisher;
     private final ProblemRepository problemRepository;
 
-    public MatchResponse create(Long problemId, @Valid MatchRequest request, Long userId) {
+    public MatchResponse create(Long problemId, Long userId) {
         if (problemRepository.findById(problemId).isEmpty()) {
             throw ProblemNotFoundException.EXCEPTION;
         }
 
+        Long submissionId = null;
+        var submissions = submissionRepository.findAll();
+        for (var submission : submissions) {
+            if (submission.getProblem().getId().equals(problemId)
+            && submission.getUser().getId().equals(userId)
+            && submission.isDefault()) {
+                submissionId = submission.getId();
+            }
+        }
+
         Submission mine = submissionRepository
-                .findByIdAndUserId(request.submissionId(), userId)
+                .findByIdAndUserId(submissionId, userId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
         if (!Objects.equals(mine.getProblem().getId(), problemId)) {
             throw SubmissionProblemMismatchException.EXCEPTION;

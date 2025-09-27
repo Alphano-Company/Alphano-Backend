@@ -29,12 +29,11 @@ public class MatchController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MatchResponse> createMatch(
             @PathVariable Long problemId,
-            @RequestBody @Valid MatchRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long userId = userDetails.getUserId();
         // System.out.println("userId : " + userId);
-        MatchResponse response = matchService.create(problemId, request, userId);
+        MatchResponse response = matchService.create(problemId, userId);
         return ResponseEntity.ok(response);
     }
 }
