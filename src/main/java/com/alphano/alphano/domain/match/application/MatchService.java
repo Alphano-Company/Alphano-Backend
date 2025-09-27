@@ -1,10 +1,13 @@
 package com.alphano.alphano.domain.match.application;
 
+import com.alphano.alphano.domain.match.dao.MatchRepository;
+import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.match.domain.MatchStatus;
 import com.alphano.alphano.domain.match.dto.MatchJobMessage;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
 import com.alphano.alphano.domain.match.exception.OpponentNotFoundException;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
+import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
 import com.alphano.alphano.domain.submission.dao.SubmissionQueryRepository;
 import com.alphano.alphano.domain.submission.dao.SubmissionRepository;
@@ -25,11 +28,12 @@ public class MatchService {
     private final JudgeJobPublisher judgeJobPublisher;
     private final ProblemRepository problemRepository;
     private final SubmissionQueryRepository submissionQueryRepository;
+    private final MatchRepository matchRepository;
 
+    @Transactional
     public MatchResponse create(Long problemId, Long userId) {
-        if (problemRepository.findById(problemId).isEmpty()) {
-            throw ProblemNotFoundException.EXCEPTION;
-        }
+        Problem problem = problemRepository.findById(problemId)
+                .orElseThrow(() -> ProblemNotFoundException.EXCEPTION);
 
         Submission mine = submissionQueryRepository.getDefaultSubmission(problemId, userId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
@@ -45,20 +49,19 @@ public class MatchService {
         // 랜덤 시드 생성
         int seed = ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
 
+        Match match = Match.createQueuedMatch(problem, mine, opp, seed);
+        Match saved = matchRepository.save(match);
+
         // SNS 발행
         MatchJobMessage msg = new MatchJobMessage(
                 problemId,
+                saved.getId(),
                 seed,
                 new MatchJobMessage.Agent(mine.getUser().getId(), mine.getId(), mine.getLanguage(), mine.getCodeKey()),
                 new MatchJobMessage.Agent(opp.getUser().getId(), opp.getId(), opp.getLanguage(), opp.getCodeKey())
         );
         judgeJobPublisher.publishMatchRequest(msg);
 
-        return new MatchResponse(
-                problemId,
-                opp.getUser().getId(),
-                seed,
-                MatchStatus.QUEUED
-        );
+        return MatchResponse.of(problemId, saved.getId(), opp.getUser().getId(), seed, MatchStatus.QUEUED);
     }
 }

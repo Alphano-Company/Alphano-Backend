@@ -63,7 +63,7 @@ public class SubmissionQueryRepository {
     public Optional<Submission> getDefaultSubmission(Long problemId, Long userId) {
         QSubmission submission = QSubmission.submission;
         return Optional.ofNullable(
-                queryFactory.select(submission)
+                queryFactory.selectFrom(submission)
                         .where(
                                 submission.problem.id.eq(problemId),
                                 submission.user.id.eq(userId),

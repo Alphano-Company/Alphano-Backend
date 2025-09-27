@@ -1,7 +1,6 @@
 package com.alphano.alphano.domain.match.api;
 
 import com.alphano.alphano.domain.match.application.MatchService;
-import com.alphano.alphano.domain.match.dto.request.MatchRequest;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
 import com.alphano.alphano.security.principal.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
