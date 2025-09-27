@@ -43,4 +43,15 @@ public class SubmissionService {
 
         return SubmissionDetailResponse.from(submission, s3Service);
     }
+
+    @Transactional
+    public void setDefaultSubmission(Long userId, Long submissionId) {
+        Long problemId = submissionRepository.findProblemIdByIdAndUserId(submissionId, userId)
+                .orElseThrow(() -> SubmissionForbiddenException.EXCEPTION);
+
+        int updateRow = submissionRepository.switchDefault(userId, problemId, submissionId);
+        if (updateRow == 0) {
+            throw new IllegalStateException("기본 제출 변경 실패");
+        }
+    }
 }
