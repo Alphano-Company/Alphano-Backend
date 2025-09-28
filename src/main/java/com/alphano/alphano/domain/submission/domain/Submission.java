@@ -21,6 +21,8 @@ public class Submission extends BaseTimeEntity {
     @Column(name = "submission_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status;
     private String language;
     private boolean isDefault;
     private Integer win;
@@ -55,5 +57,13 @@ public class Submission extends BaseTimeEntity {
 
     public void setProblem(Problem problem) {
         this.problem = problem;
+    }
+
+    public void setUploading() {
+        this.status = SubmissionStatus.UPLOADING;
+    }
+
+    public void setReady() {
+        this.status = SubmissionStatus.READY;
     }
 }

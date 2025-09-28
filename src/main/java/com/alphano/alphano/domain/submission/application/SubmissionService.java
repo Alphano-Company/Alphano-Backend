@@ -78,6 +78,7 @@ public class SubmissionService {
                 .isDefault(!exists)
                 .codeLength(request.codeLength())
                 .build();
+        submission.setUploading();
         user.addSubmission(submission);
         problem.addSubmission(submission);
         submissionRepository.save(submission);
