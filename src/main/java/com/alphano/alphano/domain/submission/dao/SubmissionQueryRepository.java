@@ -2,6 +2,7 @@ package com.alphano.alphano.domain.submission.dao;
 
 import com.alphano.alphano.domain.submission.domain.QSubmission;
 import com.alphano.alphano.domain.submission.domain.Submission;
+import com.alphano.alphano.domain.submission.domain.SubmissionStatus;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -37,7 +38,8 @@ public class SubmissionQueryRepository {
                 .from(submission)
                 .where(
                         submission.problem.id.eq(problemId),
-                        submission.user.id.eq(userId)
+                        submission.user.id.eq(userId),
+                        submission.status.eq(SubmissionStatus.READY)
                 )
                 .orderBy(
                         submission.createdAt.desc(),

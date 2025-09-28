@@ -10,11 +10,14 @@ import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
 import com.alphano.alphano.domain.submission.dao.SubmissionQueryRepository;
 import com.alphano.alphano.domain.submission.dao.SubmissionRepository;
 import com.alphano.alphano.domain.submission.domain.Submission;
+import com.alphano.alphano.domain.submission.domain.SubmissionStatus;
 import com.alphano.alphano.domain.submission.dto.request.AddSubmissionRequest;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionDetailResponse;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
+import com.alphano.alphano.domain.submission.exception.SubmissionCodeObjectNotFoundException;
 import com.alphano.alphano.domain.submission.exception.SubmissionForbiddenException;
 import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundException;
+import com.alphano.alphano.domain.submission.exception.SubmissionNotReadyException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -44,12 +47,10 @@ public class SubmissionService {
     }
 
     public SubmissionDetailResponse getSubmissionDetail(Long userId, Long submissionId) {
-        Submission submission = submissionRepository.findById(submissionId)
+        Submission submission = submissionRepository.findByIdAndUserId(submissionId, userId)
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
 
-        if (!userId.equals(submission.getUser().getId())) {
-            throw SubmissionForbiddenException.EXCEPTION;
-        }
+        if (!submission.isReady()) throw SubmissionNotReadyException.EXCEPTION;
 
         return SubmissionDetailResponse.from(submission, s3Service);
     }
@@ -59,10 +60,11 @@ public class SubmissionService {
         Long problemId = submissionRepository.findProblemIdByIdAndUserId(submissionId, userId)
                 .orElseThrow(() -> SubmissionForbiddenException.EXCEPTION);
 
-        int updateRow = submissionRepository.switchDefault(userId, problemId, submissionId);
+        int updateRow = submissionRepository.setDefault(userId, problemId, submissionId, SubmissionStatus.READY);
         if (updateRow == 0) {
-            throw new IllegalStateException("기본 제출 변경 실패");
+            throw SubmissionNotReadyException.EXCEPTION;
         }
+        submissionRepository.unsetDefault(userId, problemId, submissionId);
     }
 
     @Transactional

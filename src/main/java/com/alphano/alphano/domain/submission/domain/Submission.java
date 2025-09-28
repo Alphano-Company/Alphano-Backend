@@ -66,4 +66,8 @@ public class Submission extends BaseTimeEntity {
     public void setReady() {
         this.status = SubmissionStatus.READY;
     }
+
+    public boolean isReady() {
+        return status == SubmissionStatus.READY;
+    }
 }
