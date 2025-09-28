@@ -1,6 +1,8 @@
 package com.alphano.alphano.domain.submission.api;
 
+import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.domain.submission.application.SubmissionService;
+import com.alphano.alphano.domain.submission.dto.request.AddSubmissionRequest;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionDetailResponse;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
 import com.alphano.alphano.security.principal.CustomUserDetails;
@@ -12,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class SubmissionController {
@@ -54,5 +58,17 @@ public class SubmissionController {
         Long userId = userDetails.getUserId();
         submissionService.setDefaultSubmission(userId, submissionId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/problems/{problemId}/submissions")
+    @Operation(summary = "코드 추가")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<S3Response> addSubmission(
+            @PathVariable Long problemId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            AddSubmissionRequest request
+    ) {
+        Long userId = userDetails.getUserId();
+        return ResponseEntity.ok(submissionService.addSubmission(problemId, userId, request));
     }
 }

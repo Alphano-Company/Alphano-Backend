@@ -5,16 +5,16 @@ import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Submission extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,8 +38,22 @@ public class Submission extends BaseTimeEntity {
     private Problem problem;
 
     @OneToMany(mappedBy = "agent1Submission", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Match> matches = new ArrayList<>();
 
     @OneToMany(mappedBy = "agent2Submission", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Match> matchesAsAgent2 = new ArrayList<>();
+
+    public void updateCodeKey(String codeKey) {
+        this.codeKey = codeKey;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
 }

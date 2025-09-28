@@ -46,4 +46,9 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private List<UserHistory> userHistories = new ArrayList<>();
 
+    public void addSubmission(Submission submission) {
+        this.submissions.add(submission);
+        submission.setUser(this);
+    }
+
 }

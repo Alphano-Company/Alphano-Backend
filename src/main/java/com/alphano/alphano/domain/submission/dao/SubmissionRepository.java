@@ -26,4 +26,6 @@ where s.user.id = :userId and s.problem.id = :problemId and (s.isDefault = true 
 
     @Query("select s.problem.id from Submission s where s.id = :id and s.user.id = :userId")
     Optional<Long> findProblemIdByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
+    boolean existsByProblemIdAndUserId(Long problemId, Long userId);
 }
