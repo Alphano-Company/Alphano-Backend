@@ -15,8 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 public class SubmissionController {
     private final SubmissionService submissionService;
@@ -75,10 +73,11 @@ public class SubmissionController {
     @PatchMapping("/submissions/{submissionId}/finalize")
     @Operation(summary = "s3에 코드 객체 업로드 확정")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<Void> addSubmission(
-            @PathVariable Long submissionId
+    public ResponseEntity<String> addSubmission(
+            @PathVariable Long submissionId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        submissionService.finalizeSubmission(submissionId);
-        return ResponseEntity.ok().build();
+        Long userId = userDetails.getUserId();
+        return ResponseEntity.ok(submissionService.finalizeSubmission(submissionId, userId));
     }
 }
