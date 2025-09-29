@@ -71,4 +71,14 @@ public class SubmissionController {
         Long userId = userDetails.getUserId();
         return ResponseEntity.ok(submissionService.addSubmission(problemId, userId, request));
     }
+
+    @PatchMapping("/submissions/{submissionId}/finalize")
+    @Operation(summary = "s3에 코드 객체 업로드 확정")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> addSubmission(
+            @PathVariable Long submissionId
+    ) {
+        submissionService.finalizeSubmission(submissionId);
+        return ResponseEntity.ok().build();
+    }
 }

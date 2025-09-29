@@ -68,6 +68,6 @@ public class Submission extends BaseTimeEntity {
     }
 
     public boolean isReady() {
-        return status == SubmissionStatus.READY;
+        return this.status == SubmissionStatus.READY;
     }
 }

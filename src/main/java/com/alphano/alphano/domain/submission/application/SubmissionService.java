@@ -21,10 +21,12 @@ import com.alphano.alphano.domain.submission.exception.SubmissionNotReadyExcepti
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import static com.alphano.alphano.common.consts.AlphanoStatic.ALPHANO_SUBMISSIONS;
 
@@ -37,6 +39,7 @@ public class SubmissionService {
     private final S3Service s3Service;
     private final SubmissionRepository submissionRepository;
     private final UserRepository userRepository;
+    private final S3Client s3Client;
 
     public Page<SubmissionSummaryResponse> getAllSubmissions(Long userId, Long problemId, Pageable pageable) {
         if (!problemRepository.existsById(problemId)) {
@@ -90,5 +93,18 @@ public class SubmissionService {
         submission.updateCodeKey(codeKey);
 
         return s3Service.createPresignedPutUrl(ALPHANO_SUBMISSIONS, request.fileName(), request.metadata(), keyGenerator);
+    }
+
+    @Transactional
+    public void finalizeSubmission(Long submissionId) {
+        Submission submission = submissionRepository.findById(submissionId)
+                .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
+        if (submission.isReady()) return;
+        if (s3Service.objectExists(ALPHANO_SUBMISSIONS, submission.getCodeKey())) {
+            submission.setReady();
+            submissionRepository.save(submission);
+        } else {
+            throw SubmissionCodeObjectNotFoundException.EXCEPTION;
+        }
     }
 }

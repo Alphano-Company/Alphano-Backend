@@ -58,6 +58,7 @@ INSERT INTO user_rating (
 INSERT INTO submission(
     user_id,
     problem_id,
+    status,
     language,
     is_default,
     win,
@@ -67,7 +68,7 @@ INSERT INTO submission(
     created_at,
     updated_at
 ) VALUES
-      (1, 1, 'c++20', true, 4, 0, 0, 'submissions/1/1/1/main.cpp', CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
-      (1, 1, 'python3', false, 1, 4, 3, 'key2', CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
-      (1, 1, 'c20', false, 5, 6, 5, 'key1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      (2, 1, 'pypy3', true, 0, 0, 0, 'submissions/1/2/4/main.py', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+      (1, 1, 'UPLOADING', 'c++20', true, 4, 0, 0, 'submissions/1/1/1/main.cpp', CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (1, 1, 'UPLOADING', 'python3', false, 1, 4, 3, 'key2', CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
+      (1, 1, 'READY', 'c20', false, 5, 6, 5, 'key1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+      (2, 1, 'READY', 'pypy3', true, 0, 0, 0, 'submissions/1/2/4/main.py', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
