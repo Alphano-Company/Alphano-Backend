@@ -5,22 +5,24 @@ import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Submission extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "submission_id")
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status;
     private String language;
     private boolean isDefault;
     private Integer win;
@@ -38,8 +40,34 @@ public class Submission extends BaseTimeEntity {
     private Problem problem;
 
     @OneToMany(mappedBy = "agent1Submission", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Match> matches = new ArrayList<>();
 
     @OneToMany(mappedBy = "agent2Submission", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Match> matchesAsAgent2 = new ArrayList<>();
+
+    public void updateCodeKey(String codeKey) {
+        this.codeKey = codeKey;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
+
+    public void setUploading() {
+        this.status = SubmissionStatus.UPLOADING;
+    }
+
+    public void setReady() {
+        this.status = SubmissionStatus.READY;
+    }
+
+    public boolean isReady() {
+        return this.status == SubmissionStatus.READY;
+    }
 }

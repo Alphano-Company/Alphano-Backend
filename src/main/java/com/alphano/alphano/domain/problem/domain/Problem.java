@@ -47,4 +47,9 @@ public class Problem extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "problem", cascade = CascadeType.ALL)
     private List<UserHistory> userHistories = new ArrayList<>();
+
+    public void addSubmission(Submission submission) {
+        this.submissions.add(submission);
+        submission.setProblem(this);
+    }
 }
