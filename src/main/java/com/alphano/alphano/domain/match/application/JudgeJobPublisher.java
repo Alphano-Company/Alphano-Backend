@@ -24,20 +24,17 @@ public class JudgeJobPublisher {
     @Value("${spring.cloud.aws.sns.topic.match-result}")
     private String matchResultArn;
 
-    public void publishMatchRequest(MatchJobMessage message) {
-        publishJson(matchRequestArn, message);
+    public void publishMatchRequest(MatchJobMessage message, String messageGroupId) {
+        publishJson(matchRequestArn, message, messageGroupId);
     }
 
-    public void publishMatchResult(Object resultPayload) {
-        publishJson(matchResultArn, resultPayload);
-    }
-
-    private void publishJson(String topicArn, Object payload) {
+    private void publishJson(String topicArn, Object payload, String messageGroupId) {
         try {
             String body = objectMapper.writeValueAsString(payload);
             PublishRequest req = PublishRequest.builder()
                     .topicArn(topicArn)
                     .message(body)
+                    .messageGroupId(messageGroupId)
                     .build();
             snsClient.publish(req);
             log.info("SNS published. topic={} bytes={}", topicArn, body.length());
