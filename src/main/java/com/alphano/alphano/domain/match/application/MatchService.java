@@ -60,7 +60,8 @@ public class MatchService {
                 new MatchJobMessage.Agent(mine.getUser().getId(), mine.getId(), mine.getLanguage(), mine.getCodeKey()),
                 new MatchJobMessage.Agent(opp.getUser().getId(), opp.getId(), opp.getLanguage(), opp.getCodeKey())
         );
-        judgeJobPublisher.publishMatchRequest(msg);
+        String groupId = "problem-" + problemId;
+        judgeJobPublisher.publishMatchRequest(msg, groupId);
 
         return MatchResponse.of(problemId, saved.getId(), opp.getUser().getId(), seed, MatchStatus.QUEUED);
     }

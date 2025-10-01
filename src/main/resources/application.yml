@@ -34,12 +34,12 @@ spring:
           expire-minutes:  15
       sns:
         topic:
-          match-request: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-request
-          match-result: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-result
+          match-request: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-request.fifo
+          match-result: arn:aws:sns:ap-northeast-2:748178823461:alphano-match-result.fifo
       sqs:
         queues:
-          backend: alphano-BackendQueue
-          match-worker: alphano-MatchWorkerQueue
+          backend: alphano-BackendQueue.fifo
+          match-worker: alphano-MatchWorkerQueue.fifo
 
   mail:
     host: smtp.gmail.com
