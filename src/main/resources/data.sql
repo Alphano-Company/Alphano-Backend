@@ -23,8 +23,7 @@ INSERT INTO problem(
       ('두 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 234, 12, 2, CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
       ('세 번째 게임', '이 게임은 아주 엄청난 게임입니다.', '입력 형식', '출력 형식', 45, 4, 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- 유저 등록 (user_id는 자동 생성)
-INSERT INTO users(
+INSERT INTO users (
     profile_image_key,
     identifier,
     password,
@@ -32,9 +31,18 @@ INSERT INTO users(
     updated_at,
     role
 ) VALUES
-      ('profile1.png', 'amily9011', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
-      ('profile2.png', 'amily9012', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER');
+    ('profile1.png',  'tester01', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 1
+    ('profile2.png',  'tester02', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 2
+    ('profile3.png',  'tester03', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 3
+    ('profile4.png',  'tester04', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 4
+    ('profile5.png',  'tester05', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 5
+    ('profile6.png',  'tester06', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 6
+    ('profile7.png',  'tester07', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 7
+    ('profile8.png',  'tester08', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 8
+    ('profile9.png',  'tester09', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'), -- id 9
+    ('profile10.png', 'tester10', '$2a$10$bmZIWISzBbsKqYbYTlrB9O7oub9bPNcZmqusHmNiS26GTRYVBgHbe', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'); -- id 10
 
+-- user_rating: 문제 1에서의 현재 레이팅 (유저별 1행)
 INSERT INTO user_rating (
     rating,
     win,
@@ -46,16 +54,20 @@ INSERT INTO user_rating (
     user_id,
     created_at,
     updated_at
-) VALUES (1500, 10, 2, 1, 5, 6, 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-         (1720, 20, 5, 3, 7, 8, 1, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-         (1630, 15, 3, 2, 4, 5, 2, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-         (1580, 11, 4, 1, 3, 4, 2, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-         (1400, 8, 6, 0, 2, 3, 3, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-         (1300, 5, 7, 1, 1, 2, 3, 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+) VALUES
+      (1500, 10, 2, 1,  5,  6, 1, 1,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 1
+      (1510, 12, 3, 1,  4,  5, 1, 2,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 2
+      (1500,  8, 4, 2,  3,  4, 1, 3,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 3
+      (1480,  9, 6, 1,  2,  3, 1, 4,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 4
+      (1540, 15, 5, 0,  6,  7, 1, 5,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 5
+      (1600, 20, 8, 2,  7,  8, 1, 6,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 6
+      (1525, 11, 4, 2,  3,  4, 1, 7,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 7
+      (1470,  9, 7, 1,  2,  3, 1, 8,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 8
+      (1555, 16, 6, 0,  5,  6, 1, 9,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 9
+      (1495, 10, 5, 2,  4,  5, 1, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);  -- uid 10
 
--- 제출 등록 (submission_id는 자동 생성)
--- FK(user_id, problem_id)는 위에서 INSERT한 순서대로 1, 2, 3... 값이 매겨짐
-INSERT INTO submission(
+-- submission: 각 유저가 문제 1에 대해 READY 상태의 대표 제출 1건
+INSERT INTO submission (
     user_id,
     problem_id,
     status,
@@ -68,7 +80,13 @@ INSERT INTO submission(
     created_at,
     updated_at
 ) VALUES
-      (1, 1, 'UPLOADING', 'c++20', true, 4, 0, 0, 'submissions/1/1/1/main.cpp', CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
-      (1, 1, 'UPLOADING', 'python3', false, 1, 4, 3, 'key2', CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
-      (1, 1, 'READY', 'c20', false, 5, 6, 5, 'key1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-      (2, 1, 'READY', 'pypy3', true, 0, 0, 0, 'submissions/1/2/4/main.py', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+      (1,  1, 'READY', 'c++20',   true, 10, 2, 1, 'submissions/1/1/main.cpp',     CURRENT_TIMESTAMP - 4, CURRENT_TIMESTAMP),
+      (2,  1, 'READY', 'pypy3',   true,  9, 3, 2, 'submissions/1/2/main.py',      CURRENT_TIMESTAMP - 3, CURRENT_TIMESTAMP),
+      (3,  1, 'READY', 'java',    true,  8, 4, 2, 'submissions/1/3/Main.java',    CURRENT_TIMESTAMP - 3, CURRENT_TIMESTAMP),
+      (4,  1, 'READY', 'python3', true,  7, 6, 1, 'submissions/1/4/main.py',      CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (5,  1, 'READY', 'c++20',   true,  6, 5, 1, 'submissions/1/5/main.cpp',     CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (6,  1, 'READY', 'c20',     true,  5, 7, 1, 'submissions/1/6/main.c',       CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
+      (7,  1, 'READY', 'c++20',   true,  7, 4, 1, 'submissions/1/7/main.cpp',     CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (8,  1, 'READY', 'python3', true,  6, 6, 1, 'submissions/1/8/main.py',      CURRENT_TIMESTAMP - 2, CURRENT_TIMESTAMP),
+      (9,  1, 'READY', 'java',    true,  9, 5, 0, 'submissions/1/9/Main.java',    CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP),
+      (10, 1, 'READY', 'pypy3',   true,  8, 5, 2, 'submissions/1/10/main.py',     CURRENT_TIMESTAMP - 1, CURRENT_TIMESTAMP);

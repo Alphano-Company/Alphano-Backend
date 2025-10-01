@@ -19,8 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.alphano.alphano.domain.problem.domain.QProblem.problem;
-
 @Repository
 @RequiredArgsConstructor
 public class UserRatingQueryRepository {
@@ -62,5 +60,18 @@ public class UserRatingQueryRepository {
                 .where(userRating.problem.id.eq(problemId));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    public Integer findCurrentRating(Long problemId, Long userId) {
+        QUserRating userRating = QUserRating.userRating;
+
+        return queryFactory
+                .select(userRating.rating)
+                .from(userRating)
+                .where(
+                        userRating.problem.id.eq(problemId),
+                        userRating.user.id.eq(userId)
+                )
+                .fetchOne();
     }
 }
