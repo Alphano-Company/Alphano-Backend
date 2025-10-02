@@ -68,24 +68,47 @@ public class MatchService {
 
     private Submission chooseOpponent(Long problemId, Long userId, double rating) {
         double sigma = sigma(rating);
-        double p = ThreadLocalRandom.current().nextGaussian();
-        double x = rating + sigma * p;
 
-        System.out.println("sigma = " + sigma);
-        System.out.println("x = " + x);
+        List<Submission> candidates = submissionQueryRepository.findAllCandidatesDefaultSubmission(problemId, userId);
 
-        Double minDist = submissionQueryRepository.findMinDistance(problemId, userId, x);
-        if (minDist == null) {
+        int n = candidates.size();
+        if (n == 0) {
             throw OpponentNotFoundException.EXCEPTION;
         }
 
-        List<Submission> opponents = submissionQueryRepository.findAllWithExactDistance(problemId, userId, x, minDist);
-        if (opponents.isEmpty()) {
+        int bestIdx = -1;
+        double bestVal = Double.NEGATIVE_INFINITY;
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < n; i++) {
+            Submission submission = candidates.get(i);
+            Long candidateId = submission.getUser().getId();
+            double candidateRating = userRatingQueryRepository.findCurrentRating(problemId, candidateId);
+
+            double d = Math.abs(rating - candidateRating);
+
+            double li = -d / sigma;
+
+            double u;
+            do {
+                u = random.nextDouble();
+            } while (u <= 0.0 || u >= 1.0);
+
+            double gi = -Math.log(-Math.log(u));
+            double val = li + gi;
+
+            if (val > bestVal) {
+                bestVal = val;
+                bestIdx = i;
+            }
+        }
+
+        if (bestIdx < 0) {
             throw OpponentNotFoundException.EXCEPTION;
         }
 
-        int idx = ThreadLocalRandom.current().nextInt(opponents.size());
-        return opponents.get(idx);
+        return candidates.get(bestIdx);
     }
 
     private double sigma(double rating) {

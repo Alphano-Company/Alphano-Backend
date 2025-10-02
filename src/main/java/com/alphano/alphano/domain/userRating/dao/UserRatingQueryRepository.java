@@ -4,6 +4,7 @@ import com.alphano.alphano.domain.problem.dto.query.LeaderboardQuery;
 import com.alphano.alphano.domain.problem.dto.query.ProblemSummaryQuery;
 import com.alphano.alphano.domain.user.domain.QUser;
 import com.alphano.alphano.domain.userRating.domain.QUserRating;
+import com.alphano.alphano.domain.userRating.domain.UserRating;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
