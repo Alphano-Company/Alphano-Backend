@@ -56,15 +56,15 @@ INSERT INTO user_rating (
     updated_at
 ) VALUES
       (1500, 10, 2, 1,  5,  6, 1, 1,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 1
-      (1510, 12, 3, 1,  4,  5, 1, 2,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 2
-      (1500,  8, 4, 2,  3,  4, 1, 3,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 3
-      (1480,  9, 6, 1,  2,  3, 1, 4,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 4
-      (1540, 15, 5, 0,  6,  7, 1, 5,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 5
-      (1600, 20, 8, 2,  7,  8, 1, 6,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 6
-      (1525, 11, 4, 2,  3,  4, 1, 7,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 7
-      (1470,  9, 7, 1,  2,  3, 1, 8,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 8
-      (1555, 16, 6, 0,  5,  6, 1, 9,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 9
-      (1495, 10, 5, 2,  4,  5, 1, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);  -- uid 10
+      (1300, 12, 3, 1,  4,  5, 1, 2,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 2
+      (1350,  8, 4, 2,  3,  4, 1, 3,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 3
+      (1400,  9, 6, 1,  2,  3, 1, 4,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 4
+      (1450, 15, 5, 0,  6,  7, 1, 5,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 5
+      (1500, 20, 8, 2,  7,  8, 1, 6,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 6
+      (1550, 11, 4, 2,  3,  4, 1, 7,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 7
+      (1600,  9, 7, 1,  2,  3, 1, 8,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 8
+      (1650, 16, 6, 0,  5,  6, 1, 9,  CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),  -- uid 9
+      (1700, 10, 5, 2,  4,  5, 1, 10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);  -- uid 10
 
 -- submission: 각 유저가 문제 1에 대해 READY 상태의 대표 제출 1건
 INSERT INTO submission (

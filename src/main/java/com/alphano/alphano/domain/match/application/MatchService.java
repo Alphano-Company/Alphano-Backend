@@ -40,7 +40,7 @@ public class MatchService {
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
 
         // 상대 선택
-        Integer rating = userRatingQueryRepository.findCurrentRating(problemId, userId);
+        Double rating = userRatingQueryRepository.findCurrentRating(problemId, userId);
         Submission opp = chooseOpponent(problemId, userId, rating);
 
         if (mine.getCodeKey() == null || opp.getCodeKey() == null)
@@ -66,10 +66,13 @@ public class MatchService {
         return MatchResponse.of(problemId, saved.getId(), opp.getUser().getId(), seed, MatchStatus.QUEUED);
     }
 
-    private Submission chooseOpponent(Long problemId, Long userId, int rating) {
+    private Submission chooseOpponent(Long problemId, Long userId, double rating) {
+        double sigma = sigma(rating);
         double p = ThreadLocalRandom.current().nextGaussian();
+        double x = rating + sigma * p;
 
-        double x = rating + 20.0 * p;
+        System.out.println("sigma = " + sigma);
+        System.out.println("x = " + x);
 
         Double minDist = submissionQueryRepository.findMinDistance(problemId, userId, x);
         if (minDist == null) {
@@ -83,5 +86,17 @@ public class MatchService {
 
         int idx = ThreadLocalRandom.current().nextInt(opponents.size());
         return opponents.get(idx);
+    }
+
+    private double sigma(double rating) {
+        if (0 <= rating && rating <= 500) {
+            return -0.2 * rating + 200;
+        } else if (500 < rating && rating <= 1500) {
+            return -0.05 * rating + 125;
+        } else if (1500 < rating && rating <= 2500) {
+            return -0.04 * rating + 110;
+        } else {
+            return 10.0;
+        }
     }
 }

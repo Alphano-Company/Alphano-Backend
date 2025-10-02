@@ -17,7 +17,7 @@ public class UserRating extends BaseTimeEntity {
     @Column(name = "user_rating_id")
     private Long id;
 
-    private int rating = 1500;
+    private double rating = 1500;
     private Integer win;
     private Integer lose;
     private Integer draw;

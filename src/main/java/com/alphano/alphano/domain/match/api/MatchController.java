@@ -35,21 +35,4 @@ public class MatchController {
         MatchResponse response = matchService.create(problemId, userId);
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping
-    @Operation(
-            summary = "SNS에 매치 토픽 발행",
-            description = "SQS의 큐에 매치 요청이 쌓임"
-
-    )
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MatchResponse> createMatch(
-            @PathVariable Long problemId,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        Long userId = userDetails.getUserId();
-        // System.out.println("userId : " + userId);
-        MatchResponse response = matchService.create(problemId, userId);
-        return ResponseEntity.ok(response);
-    }
 }

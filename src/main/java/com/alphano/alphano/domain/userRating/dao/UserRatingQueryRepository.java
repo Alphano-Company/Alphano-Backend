@@ -62,7 +62,7 @@ public class UserRatingQueryRepository {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
-    public Integer findCurrentRating(Long problemId, Long userId) {
+    public Double findCurrentRating(Long problemId, Long userId) {
         QUserRating userRating = QUserRating.userRating;
 
         return queryFactory
