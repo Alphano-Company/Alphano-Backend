@@ -68,6 +68,7 @@ public class MatchService {
 
     private Submission chooseOpponent(Long problemId, Long userId, int rating) {
         double p = ThreadLocalRandom.current().nextGaussian();
+
         double x = rating + 20.0 * p;
 
         Double minDist = submissionQueryRepository.findMinDistance(problemId, userId, x);
