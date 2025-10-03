@@ -98,10 +98,8 @@ public class MatchService {
 
             double li = -d / sigma;
 
-            double u;
-            do {
-                u = random.nextDouble();
-            } while (u <= 0.0 || u >= 1.0);
+            double epsilon = 1e-10;
+            double u = epsilon + (1.0 - 2 * epsilon) * random.nextDouble();
 
             double gi = -Math.log(-Math.log(u));
             double val = li + gi;
@@ -120,11 +118,11 @@ public class MatchService {
     }
 
     private double sigma(double rating) {
-        if (0 <= rating && rating <= 500) {
+        if (rating < 500) {
             return -0.2 * rating + 200;
-        } else if (500 < rating && rating <= 1500) {
+        } else if (rating < 1500) {
             return -0.05 * rating + 125;
-        } else if (1500 < rating && rating <= 2500) {
+        } else if (rating < 2500) {
             return -0.04 * rating + 110;
         } else {
             return 10.0;
