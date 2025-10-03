@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +78,12 @@ public class MatchService {
             throw OpponentNotFoundException.EXCEPTION;
         }
 
+        List<Long> candidateIds = candidates.stream()
+                .map(submission -> submission.getUser().getId())
+                .collect(Collectors.toList());
+
+        Map<Long, Double> candidateRatings = userRatingQueryRepository.findCurrentRatings(problemId, candidateIds);
+
         int bestIdx = -1;
         double bestVal = Double.NEGATIVE_INFINITY;
 
@@ -84,7 +92,7 @@ public class MatchService {
         for (int i = 0; i < n; i++) {
             Submission submission = candidates.get(i);
             Long candidateId = submission.getUser().getId();
-            double candidateRating = userRatingQueryRepository.findCurrentRating(problemId, candidateId);
+            double candidateRating = candidateRatings.get(candidateId);
 
             double d = Math.abs(rating - candidateRating);
 
