@@ -19,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +42,7 @@ public class MatchService {
                 .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
 
         // 상대 선택
-        Integer rating = userRatingQueryRepository.findCurrentRating(problemId, userId);
+        Double rating = userRatingQueryRepository.findCurrentRating(problemId, userId);
         Submission opp = chooseOpponent(problemId, userId, rating);
 
         if (mine.getCodeKey() == null || opp.getCodeKey() == null)
@@ -66,21 +68,64 @@ public class MatchService {
         return MatchResponse.of(problemId, saved.getId(), opp.getUser().getId(), seed, MatchStatus.QUEUED);
     }
 
-    private Submission chooseOpponent(Long problemId, Long userId, int rating) {
-        double p = ThreadLocalRandom.current().nextGaussian();
-        double x = rating + 20.0 * p;
+    private Submission chooseOpponent(Long problemId, Long userId, double rating) {
+        double sigma = sigma(rating);
 
-        Double minDist = submissionQueryRepository.findMinDistance(problemId, userId, x);
-        if (minDist == null) {
+        List<Submission> candidates = submissionQueryRepository.findAllCandidatesDefaultSubmission(problemId, userId);
+
+        int n = candidates.size();
+        if (n == 0) {
             throw OpponentNotFoundException.EXCEPTION;
         }
 
-        List<Submission> opponents = submissionQueryRepository.findAllWithExactDistance(problemId, userId, x, minDist);
-        if (opponents.isEmpty()) {
+        List<Long> candidateIds = candidates.stream()
+                .map(submission -> submission.getUser().getId())
+                .collect(Collectors.toList());
+
+        Map<Long, Double> candidateRatings = userRatingQueryRepository.findCurrentRatings(problemId, candidateIds);
+
+        int bestIdx = -1;
+        double bestVal = Double.NEGATIVE_INFINITY;
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        for (int i = 0; i < n; i++) {
+            Submission submission = candidates.get(i);
+            Long candidateId = submission.getUser().getId();
+            double candidateRating = candidateRatings.get(candidateId);
+
+            double d = Math.abs(rating - candidateRating);
+
+            double li = -d / sigma;
+
+            double epsilon = 1e-10;
+            double u = epsilon + (1.0 - 2 * epsilon) * random.nextDouble();
+
+            double gi = -Math.log(-Math.log(u));
+            double val = li + gi;
+
+            if (val > bestVal) {
+                bestVal = val;
+                bestIdx = i;
+            }
+        }
+
+        if (bestIdx < 0) {
             throw OpponentNotFoundException.EXCEPTION;
         }
 
-        int idx = ThreadLocalRandom.current().nextInt(opponents.size());
-        return opponents.get(idx);
+        return candidates.get(bestIdx);
+    }
+
+    private double sigma(double rating) {
+        if (rating < 500) {
+            return -0.2 * rating + 200;
+        } else if (rating < 1500) {
+            return -0.05 * rating + 125;
+        } else if (rating < 2500) {
+            return -0.04 * rating + 110;
+        } else {
+            return 10.0;
+        }
     }
 }

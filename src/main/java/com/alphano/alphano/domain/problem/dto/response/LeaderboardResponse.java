@@ -8,7 +8,7 @@ public record LeaderboardResponse (
         Long userId,
         String identifier,
         S3Response profileImage,
-        Integer rating,
+        Double rating,
         Integer win,
         Integer lose,
         Integer draw,

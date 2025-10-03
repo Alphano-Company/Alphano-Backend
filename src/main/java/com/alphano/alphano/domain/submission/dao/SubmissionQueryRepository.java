@@ -4,10 +4,8 @@ import com.alphano.alphano.domain.submission.domain.QSubmission;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.domain.SubmissionStatus;
 import com.alphano.alphano.domain.submission.dto.response.SubmissionSummaryResponse;
-import com.alphano.alphano.domain.userRating.domain.QUserRating;
+import com.alphano.alphano.domain.user.domain.QUser;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -72,49 +70,25 @@ public class SubmissionQueryRepository {
                         .where(
                                 submission.problem.id.eq(problemId),
                                 submission.user.id.eq(userId),
-                                submission.isDefault.isTrue()
+                                submission.isDefault.isTrue(),
+                                submission.status.eq(SubmissionStatus.READY)
                         )
                         .orderBy(submission.id.desc())
                         .fetchFirst()
         );
     }
 
-    public Double findMinDistance(Long problemId, Long userId, double x) {
+    public List<Submission> findAllCandidatesDefaultSubmission(Long problemId, Long userId) {
         QSubmission submission = QSubmission.submission;
-        QUserRating userRating = QUserRating.userRating;
+        QUser user = QUser.user;
 
-        NumberExpression<Double> dist = Expressions.numberTemplate(Double.class, "abs({0} - {1})", userRating.rating, x);
-        return queryFactory
-                .select(dist.min())
-                .from(submission)
-                .join(userRating).on(
-                        userRating.user.eq(submission.user),
-                        userRating.problem.id.eq(problemId)
-                )
-                .where(
-                        submission.problem.id.eq(problemId),
-                        submission.user.id.ne(userId)   // 요청자 제외
-                )
-                .fetchOne();
-    }
-
-    public List<Submission> findAllWithExactDistance(Long problemId, Long userId, double x, double minDist) {
-        QSubmission submission = QSubmission.submission;
-        QUserRating userRating = QUserRating.userRating;
-
-        NumberExpression<Double> dist =
-                Expressions.numberTemplate(Double.class, "abs({0} - {1})", userRating.rating, x);
-
-        return queryFactory
-                .selectFrom(submission)
-                .join(userRating).on(
-                        userRating.user.eq(submission.user),
-                        userRating.problem.id.eq(problemId)
-                )
+        return queryFactory.selectFrom(submission)
+                .join(submission.user, user).fetchJoin()
                 .where(
                         submission.problem.id.eq(problemId),
                         submission.user.id.ne(userId),
-                        dist.eq(minDist) // 동점 전원 조회
+                        submission.isDefault.isTrue(),
+                        submission.status.eq(SubmissionStatus.READY)
                 )
                 .fetch();
     }
