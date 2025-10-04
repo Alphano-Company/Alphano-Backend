@@ -51,4 +51,9 @@ public class User extends BaseTimeEntity {
         submission.setUser(this);
     }
 
+    public void addUserRating(UserRating userRating) {
+        this.userRatings.add(userRating);
+        userRating.setUser(this);
+    }
+
 }

@@ -20,6 +20,8 @@ import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundExcepti
 import com.alphano.alphano.domain.submission.exception.SubmissionNotReadyException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.User;
+import com.alphano.alphano.domain.userRating.dao.UserRatingRepository;
+import com.alphano.alphano.domain.userRating.domain.UserRating;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class SubmissionService {
     private final S3Service s3Service;
     private final SubmissionRepository submissionRepository;
     private final UserRepository userRepository;
+    private final UserRatingRepository userRatingRepository;
 
     public Page<SubmissionSummaryResponse> getAllSubmissions(Long userId, Long problemId, Pageable pageable) {
         if (!problemRepository.existsById(problemId)) {
@@ -84,6 +87,15 @@ public class SubmissionService {
         user.addSubmission(submission);
         problem.addSubmission(submission);
         submissionRepository.save(submission);
+
+        UserRating userRating = UserRating.builder()
+                .problem(problem)
+                .user(user)
+                .build();
+        user.addUserRating(userRating);
+        problem.addUserRating(userRating);
+
+        userRatingRepository.save(userRating);
 
         KeyGenerator keyGenerator = new SubmissionKeyGenerator(problemId, userId, submission.getId());
         String codeKey = keyGenerator.generateKey(request.fileName());
