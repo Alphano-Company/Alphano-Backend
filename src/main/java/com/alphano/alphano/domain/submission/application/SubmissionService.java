@@ -83,16 +83,12 @@ public class SubmissionService {
                 .isDefault(!submissionExists)
                 .codeLength(request.codeLength())
                 .build();
-        submission.setUploading();
         user.addSubmission(submission);
         problem.addSubmission(submission);
         submissionRepository.save(submission);
 
         if (!submissionExists) {
-            UserRating userRating = UserRating.builder()
-                    .problem(problem)
-                    .user(user)
-                    .build();
+            UserRating userRating = UserRating.create();
             user.addUserRating(userRating);
             problem.addUserRating(userRating);
 

@@ -16,11 +16,11 @@ public class UserRating extends BaseTimeEntity {
     private Long id;
 
     private double rating = 1500;
-    private Integer win;
-    private Integer lose;
-    private Integer draw;
-    private Integer winStreak;
-    private Integer bestWinStreak;
+    private Integer win = 0;
+    private Integer lose = 0;
+    private Integer draw = 0;
+    private Integer winStreak = 0;
+    private Integer bestWinStreak = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
@@ -30,18 +30,8 @@ public class UserRating extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Builder
-    public UserRating(Double rating, Integer win, Integer lose, Integer draw,
-                      Integer winStreak, Integer bestWinStreak,
-                      Problem problem, User user) {
-        this.rating = (rating != null) ? rating : 1500.0;
-        this.win = (win != null) ? win : 0;
-        this.lose = (lose != null) ? lose : 0;
-        this.draw = (draw != null) ? draw : 0;
-        this.winStreak = (winStreak != null) ? winStreak : 0;
-        this.bestWinStreak = (bestWinStreak != null) ? bestWinStreak : 0;
-        this.problem = problem;
-        this.user = user;
+    public static UserRating create() {
+        return new UserRating();
     }
 
     public void setUser(User user) {
