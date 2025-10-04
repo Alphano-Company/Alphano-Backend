@@ -76,11 +76,11 @@ public class SubmissionService {
                 .orElseThrow(() -> ProblemNotFoundException.EXCEPTION);
         User user = userRepository.getReferenceById(userId);
 
-        boolean exists = submissionRepository.existsByProblemIdAndUserId(problemId, userId);
+        boolean submissionExists = submissionRepository.existsByProblemIdAndUserId(problemId, userId);
 
         Submission submission = Submission.builder()
                 .language(request.language())
-                .isDefault(!exists)
+                .isDefault(!submissionExists)
                 .codeLength(request.codeLength())
                 .build();
         submission.setUploading();
@@ -88,14 +88,16 @@ public class SubmissionService {
         problem.addSubmission(submission);
         submissionRepository.save(submission);
 
-        UserRating userRating = UserRating.builder()
-                .problem(problem)
-                .user(user)
-                .build();
-        user.addUserRating(userRating);
-        problem.addUserRating(userRating);
+        if (!submissionExists) {
+            UserRating userRating = UserRating.builder()
+                    .problem(problem)
+                    .user(user)
+                    .build();
+            user.addUserRating(userRating);
+            problem.addUserRating(userRating);
 
-        userRatingRepository.save(userRating);
+            userRatingRepository.save(userRating);
+        }
 
         KeyGenerator keyGenerator = new SubmissionKeyGenerator(problemId, userId, submission.getId());
         String codeKey = keyGenerator.generateKey(request.fileName());
