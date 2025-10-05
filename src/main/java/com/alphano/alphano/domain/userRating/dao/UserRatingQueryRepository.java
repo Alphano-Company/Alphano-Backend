@@ -40,7 +40,10 @@ public class UserRatingQueryRepository {
                 ))
                 .from(userRating)
                 .join(userRating.user, user)
-                .where(userRating.problem.id.eq(problemId))
+                .where(
+                        userRating.problem.id.eq(problemId),
+                        userRating.win.add(userRating.draw).add(userRating.lose).ne(0)
+                )
                 .orderBy(
                         userRating.rating.desc(),
                         userRating.win.desc(),
