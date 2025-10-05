@@ -20,7 +20,6 @@ import java.util.List;
 @Slf4j
 public class SqsMessageConsumer {
 
-    // private final SqsClient sqsClient;
     SqsClient sqsClient = SqsClient.create();
     private final ObjectMapper objectMapper;
 
