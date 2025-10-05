@@ -11,7 +11,7 @@ public class LeaderboardQuery {
     private Long userId;
     private String identifier;
     private String profileImageKey;
-    private Integer rating;
+    private Double rating;
     private Integer win;
     private Integer lose;
     private Integer draw;

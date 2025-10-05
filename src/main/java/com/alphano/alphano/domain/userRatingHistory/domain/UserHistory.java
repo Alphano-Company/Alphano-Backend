@@ -18,9 +18,9 @@ public class UserHistory extends BaseTimeEntity {
     @Column(name = "user_history_id")
     private Long id;
 
-    private Integer ratingBefore;
-    private Integer ratingAfter;
-    private Integer ratingDelta;
+    private Double ratingBefore;
+    private Double ratingAfter;
+    private Double ratingDelta;
 
     private Integer win;
     private Integer lose;

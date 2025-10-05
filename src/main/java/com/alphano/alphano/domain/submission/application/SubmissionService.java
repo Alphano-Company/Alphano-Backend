@@ -20,6 +20,8 @@ import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundExcepti
 import com.alphano.alphano.domain.submission.exception.SubmissionNotReadyException;
 import com.alphano.alphano.domain.user.dao.UserRepository;
 import com.alphano.alphano.domain.user.domain.User;
+import com.alphano.alphano.domain.userRating.dao.UserRatingRepository;
+import com.alphano.alphano.domain.userRating.domain.UserRating;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ public class SubmissionService {
     private final S3Service s3Service;
     private final SubmissionRepository submissionRepository;
     private final UserRepository userRepository;
+    private final UserRatingRepository userRatingRepository;
 
     public Page<SubmissionSummaryResponse> getAllSubmissions(Long userId, Long problemId, Pageable pageable) {
         if (!problemRepository.existsById(problemId)) {
@@ -73,17 +76,24 @@ public class SubmissionService {
                 .orElseThrow(() -> ProblemNotFoundException.EXCEPTION);
         User user = userRepository.getReferenceById(userId);
 
-        boolean exists = submissionRepository.existsByProblemIdAndUserId(problemId, userId);
+        boolean submissionExists = submissionRepository.existsByProblemIdAndUserId(problemId, userId);
 
         Submission submission = Submission.builder()
                 .language(request.language())
-                .isDefault(!exists)
+                .isDefault(!submissionExists)
                 .codeLength(request.codeLength())
                 .build();
-        submission.setUploading();
         user.addSubmission(submission);
         problem.addSubmission(submission);
         submissionRepository.save(submission);
+
+        if (!submissionExists) {
+            UserRating userRating = UserRating.create();
+            user.addUserRating(userRating);
+            problem.addUserRating(userRating);
+
+            userRatingRepository.save(userRating);
+        }
 
         KeyGenerator keyGenerator = new SubmissionKeyGenerator(problemId, userId, submission.getId());
         String codeKey = keyGenerator.generateKey(request.fileName());

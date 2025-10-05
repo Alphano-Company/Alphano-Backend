@@ -10,11 +10,9 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Submission extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,12 +20,12 @@ public class Submission extends BaseTimeEntity {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private SubmissionStatus status;
+    private SubmissionStatus status = SubmissionStatus.UPLOADING;
     private String language;
     private boolean isDefault;
-    private Integer win;
-    private Integer lose;
-    private Integer draw;
+    private Integer win = 0;
+    private Integer lose = 0;
+    private Integer draw = 0;
     private String codeKey;
     private Integer codeLength;
 
@@ -40,12 +38,19 @@ public class Submission extends BaseTimeEntity {
     private Problem problem;
 
     @OneToMany(mappedBy = "agent1Submission", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Match> matches = new ArrayList<>();
 
     @OneToMany(mappedBy = "agent2Submission", cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Match> matchesAsAgent2 = new ArrayList<>();
+
+    @Builder
+    public Submission(String language, boolean isDefault,
+                      String codeKey, Integer codeLength) {
+        this.language = language;
+        this.isDefault = isDefault;
+        this.codeKey = codeKey;
+        this.codeLength = codeLength;
+    }
 
     public void updateCodeKey(String codeKey) {
         this.codeKey = codeKey;

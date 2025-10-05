@@ -1,23 +1,21 @@
 package com.alphano.alphano.domain.userRating.dao;
 
 import com.alphano.alphano.domain.problem.dto.query.LeaderboardQuery;
-import com.alphano.alphano.domain.problem.dto.query.ProblemSummaryQuery;
 import com.alphano.alphano.domain.user.domain.QUser;
 import com.alphano.alphano.domain.userRating.domain.QUserRating;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -42,7 +40,10 @@ public class UserRatingQueryRepository {
                 ))
                 .from(userRating)
                 .join(userRating.user, user)
-                .where(userRating.problem.id.eq(problemId))
+                .where(
+                        userRating.problem.id.eq(problemId),
+                        userRating.win.add(userRating.draw).add(userRating.lose).ne(0)
+                )
                 .orderBy(
                         userRating.rating.desc(),
                         userRating.win.desc(),
@@ -62,7 +63,7 @@ public class UserRatingQueryRepository {
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
-    public Integer findCurrentRating(Long problemId, Long userId) {
+    public Double findCurrentRating(Long problemId, Long userId) {
         QUserRating userRating = QUserRating.userRating;
 
         return queryFactory
@@ -73,5 +74,25 @@ public class UserRatingQueryRepository {
                         userRating.user.id.eq(userId)
                 )
                 .fetchOne();
+    }
+
+    public Map<Long, Double> findCurrentRatings(Long problemId, List<Long> candidateIds) {
+        QUserRating userRating = QUserRating.userRating;
+
+        List<Tuple> results = queryFactory
+                .select(userRating.user.id, userRating.rating)
+                .from(userRating)
+                .where(
+                        userRating.problem.id.eq(problemId),
+                        userRating.user.id.in(candidateIds)
+                )
+                .fetch();
+
+        // 결과를 Map<userId, rating>으로 변환
+        return results.stream()
+                .collect(Collectors.toMap(
+                        tuple -> tuple.get(userRating.user.id),
+                        tuple -> tuple.get(userRating.rating)
+                ));
     }
 }

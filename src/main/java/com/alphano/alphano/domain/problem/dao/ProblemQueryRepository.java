@@ -149,7 +149,7 @@ public class ProblemQueryRepository {
         QUserRating urForEarliest = new QUserRating("urForEarliest");
 
         // 최고 레이팅
-        JPQLQuery<Integer> maxRating =
+        JPQLQuery<Double> maxRating =
                 JPAExpressions.select(urForMaxRating.rating.max())
                         .from(urForMaxRating)
                         .where(urForMaxRating.problem.eq(problem));

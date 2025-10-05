@@ -52,4 +52,9 @@ public class Problem extends BaseTimeEntity {
         this.submissions.add(submission);
         submission.setProblem(this);
     }
+
+    public void addUserRating(UserRating userRating) {
+        this.userRatings.add(userRating);
+        userRating.setProblem(this);
+    }
 }
