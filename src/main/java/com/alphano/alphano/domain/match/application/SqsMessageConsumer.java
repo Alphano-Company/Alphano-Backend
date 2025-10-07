@@ -1,6 +1,7 @@
 package com.alphano.alphano.domain.match.application;
 
 import com.alphano.alphano.domain.match.dto.MatchJobMessage;
+import com.alphano.alphano.domain.match.dto.MatchSqsMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class SqsMessageConsumer {
 
     SqsClient sqsClient = SqsClient.create();
     private final ObjectMapper objectMapper;
+    private final MatchResultProcessor matchResultProcessor;
 
     @Value("${spring.cloud.aws.sqs.queues.backend}")
     private String matchResultQueueUrl;
@@ -38,8 +40,9 @@ public class SqsMessageConsumer {
             List<Message> messages = sqsClient.receiveMessage(receiveRequest).messages();
 
             for (Message message : messages) {
-                handleMessage(message);
-                deleteMessage(message);
+                 if (handleMessage(message)){
+                     deleteMessage(message);
+                 }
             }
         } catch (SqsException e) {
             log.error("SQS 메시지 수신 실패", e);
@@ -50,14 +53,15 @@ public class SqsMessageConsumer {
      * 메시지 처리 로직
      * @param message
      */
-    private void handleMessage(Message message) {
+    private boolean handleMessage(Message message) {
         try {
             String body = message.body();
-            MatchJobMessage matchJobMessage = objectMapper.readValue(body, MatchJobMessage.class);
-
-            // 메시지 처리 로직 구현
+            MatchSqsMessage sqsMessage = objectMapper.readValue(body, MatchSqsMessage.class);
+            matchResultProcessor.process(sqsMessage);
+            return true;
         } catch (Exception e) {
             log.error("SQS 메시지 처리 중 예외 발생", e);
+            return false;
         }
     }
 

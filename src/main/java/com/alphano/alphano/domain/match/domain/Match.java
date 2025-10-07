@@ -1,9 +1,10 @@
 package com.alphano.alphano.domain.match.domain;
 
 import com.alphano.alphano.common.domain.BaseTimeEntity;
+import com.alphano.alphano.domain.match.dto.MatchSqsMessage;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.submission.domain.Submission;
-import com.alphano.alphano.domain.userRatingHistory.domain.UserHistory;
+import com.alphano.alphano.domain.userHistory.domain.UserHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -66,5 +67,13 @@ public class Match  extends BaseTimeEntity {
                 .agent1Submission(mine)
                 .agent2Submission(opp)
                 .build();
+    }
+
+    public void update(MatchSqsMessage sqsMessage) {
+        this.logKey = sqsMessage.logKey();
+        this.status = sqsMessage.status();
+        this.result = sqsMessage.result();
+        this.agent1EndReason = sqsMessage.agent1Reason();
+        this.agent2EndReason = sqsMessage.agent2Reason();
     }
 }

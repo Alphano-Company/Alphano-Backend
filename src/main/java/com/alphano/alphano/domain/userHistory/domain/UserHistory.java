@@ -1,4 +1,4 @@
-package com.alphano.alphano.domain.userRatingHistory.domain;
+package com.alphano.alphano.domain.userHistory.domain;
 
 import com.alphano.alphano.common.domain.BaseTimeEntity;
 import com.alphano.alphano.domain.match.domain.Match;
