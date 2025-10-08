@@ -1,5 +1,6 @@
 package com.alphano.alphano.domain.match.application;
 
+import com.alphano.alphano.common.application.S3Service;
 import com.alphano.alphano.domain.match.dao.MatchRepository;
 import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.match.domain.MatchStatus;
@@ -37,6 +38,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final UserRatingQueryRepository userRatingQueryRepository;
     private final UserHistoryRepository userHistoryRepository;
+    private final S3Service s3Service;
 
     @Transactional
     public MatchResponse create(Long problemId, Long userId) {
@@ -159,6 +161,6 @@ public class MatchService {
             history2 = histories.get(0);
         }
 
-        return MatchResultResponse.from(match, history1, history2);
+        return MatchResultResponse.from(match, history1, history2, s3Service);
     }
 }

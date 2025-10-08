@@ -1,11 +1,14 @@
 package com.alphano.alphano.domain.match.dto.response;
 
+import com.alphano.alphano.common.application.S3Service;
 import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.domain.match.domain.EndReason;
 import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.match.domain.MatchResult;
 import com.alphano.alphano.domain.match.domain.MatchStatus;
 import com.alphano.alphano.domain.userHistory.domain.UserHistory;
+
+import static com.alphano.alphano.common.consts.AlphanoStatic.ALPHANO_SUBMISSIONS;
 
 public record MatchResultResponse(
         Long matchId,
@@ -38,9 +41,15 @@ public record MatchResultResponse(
     /**
      * MatchStatus == COMPLETED
      */
-    public static MatchResultResponse from(Match match, UserHistory history1, UserHistory history2) {
+    public static MatchResultResponse from(Match match, UserHistory history1, UserHistory history2, S3Service s3Service) {
         Agent agent1Dto = Agent.from(history1, match.getAgent1EndReason());
         Agent agent2Dto = Agent.from(history2, match.getAgent2EndReason());
+
+        S3Response log = null;
+        if (match.getLogKey() != null && !match.getLogKey().isBlank()) {
+            String url = s3Service.createPresignedGetUrl(ALPHANO_SUBMISSIONS, match.getLogKey());
+            log = S3Response.of(match.getLogKey(), url);
+        }
 
         return new MatchResultResponse(
                 match.getId(),
@@ -48,7 +57,7 @@ public record MatchResultResponse(
                 match.getResult(),
                 agent1Dto,
                 agent2Dto,
-                null // S3 로그 정보
+                log
         );
     }
 
