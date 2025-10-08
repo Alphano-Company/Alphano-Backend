@@ -43,6 +43,7 @@ public class MatchResultProcessor {
         );
 
         userRatingService.applyResult(
+                sqsMessage.matchId(),
                 sqsMessage.problemId(),
                 sqsMessage.result(),
                 sqsMessage.agent1UserId(),

@@ -4,14 +4,15 @@ import com.alphano.alphano.common.domain.BaseTimeEntity;
 import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.user.domain.User;
+import com.alphano.alphano.domain.userRating.application.UserRatingService;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserHistory extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,4 +42,17 @@ public class UserHistory extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "match_id")
     private Match match;
+
+    public static UserHistory create(Match match, User user, Problem problem, double before, double after, Long opponentId, Outcome outcome) {
+        return UserHistory.builder()
+                .match(match)
+                .user(user)
+                .problem(problem)
+                .ratingBefore(before)
+                .ratingAfter(after)
+                .ratingDelta(after - before)
+                .opponentId(opponentId)
+                .outcome(outcome)
+                .build();
+    }
 }
