@@ -4,6 +4,7 @@ import com.alphano.alphano.domain.match.dao.MatchRepository;
 import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.match.domain.MatchStatus;
 import com.alphano.alphano.domain.match.dto.MatchSqsMessage;
+import com.alphano.alphano.domain.match.exception.MatchNotFoundException;
 import com.alphano.alphano.domain.submission.application.SubmissionService;
 import com.alphano.alphano.domain.userHistory.dao.UserHistoryRepository;
 import com.alphano.alphano.domain.userRating.application.UserRatingService;
@@ -27,9 +28,8 @@ public class MatchResultProcessor {
         }
 
         Match match = matchRepository.findById(sqsMessage.matchId())
-                .orElseThrow(); // 예외처리
+                .orElseThrow(() -> MatchNotFoundException.EXCEPTION);
 
-        // match 정보 업데이트
         match.update(sqsMessage);
 
         if (match.getStatus() == MatchStatus.FAILED) {
@@ -43,7 +43,8 @@ public class MatchResultProcessor {
         );
 
         userRatingService.applyResult(
-                sqsMessage.problemId(), ,
+                sqsMessage.problemId(),
+                sqsMessage.result(),
                 sqsMessage.agent1UserId(),
                 sqsMessage.agent1UserId());
     }
