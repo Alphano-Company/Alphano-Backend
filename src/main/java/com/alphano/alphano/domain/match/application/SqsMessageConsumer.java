@@ -3,6 +3,7 @@ package com.alphano.alphano.domain.match.application;
 import com.alphano.alphano.domain.match.dto.MatchJobMessage;
 import com.alphano.alphano.domain.match.dto.MatchSqsMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,61 +26,15 @@ public class SqsMessageConsumer {
     private final ObjectMapper objectMapper;
     private final MatchResultProcessor matchResultProcessor;
 
-    @Value("${spring.cloud.aws.sqs.queues.backend}")
-    private String matchResultQueueUrl;
-
-    @Scheduled(fixedDelay = 5000)   // 5초마다 polling
-    public void receiveMessages() {
+    @SqsListener(value = "${spring.cloud.aws.sqs.queues.backend}")
+    public void listen(MatchSqsMessage message) {
+        log.info("SQS로부터 메시지를 수신했습니다. MatchId: {}", message.matchId());
         try {
-            ReceiveMessageRequest receiveRequest = ReceiveMessageRequest.builder()
-                    .queueUrl(matchResultQueueUrl)
-                    .maxNumberOfMessages(1)
-                    .waitTimeSeconds(10)
-                    .build();
-
-            List<Message> messages = sqsClient.receiveMessage(receiveRequest).messages();
-
-            for (Message message : messages) {
-                 if (handleMessage(message)){
-                     deleteMessage(message);
-                 }
-            }
-        } catch (SqsException e) {
-            log.error("SQS 메시지 수신 실패", e);
-        }
-    }
-
-    /**
-     * 메시지 처리 로직
-     * @param message
-     */
-    private boolean handleMessage(Message message) {
-        try {
-            String body = message.body();
-            MatchSqsMessage sqsMessage = objectMapper.readValue(body, MatchSqsMessage.class);
-            matchResultProcessor.process(sqsMessage);
-            return true;
+            matchResultProcessor.process(message);
+            log.info("메시지 처리가 성공적으로 완료되었습니다. MatchId: {}", message.matchId());
         } catch (Exception e) {
-            log.error("SQS 메시지 처리 중 예외 발생", e);
-            return false;
-        }
-    }
-
-    /**
-     * 처리 완료된 메시지 삭제
-     * @param message
-     */
-    private void deleteMessage(Message message) {
-        try {
-            DeleteMessageRequest deleteRequest = DeleteMessageRequest.builder()
-                    .queueUrl(matchResultQueueUrl)
-                    .receiptHandle(message.receiptHandle())
-                    .build();
-
-            sqsClient.deleteMessage(deleteRequest);
-            log.info("SQS 메시지 삭제 완료. messageId={}", message.messageId());
-        } catch (SqsException e) {
-            log.error("SQS 메시지 삭제 실패", e);
+            log.error("SQS 메시지 처리 중 예외 발생. MatchId: {}", message.matchId(), e);
+            throw new RuntimeException("메시지 처리 실패", e);
         }
     }
 }

@@ -9,9 +9,11 @@ import com.alphano.alphano.domain.submission.application.SubmissionService;
 import com.alphano.alphano.domain.userHistory.dao.UserHistoryRepository;
 import com.alphano.alphano.domain.userRating.application.UserRatingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchResultProcessor {
@@ -33,8 +35,8 @@ public class MatchResultProcessor {
         match.update(sqsMessage);
 
         if (match.getStatus() == MatchStatus.FAILED) {
-            // 채점에 실패했을 경우 -> 레이팅, 승/무/패 반영은 어떻게?
-            // throw 채점에 실패했습니다.
+            log.warn("매치 ID {}의 채점이 FAILED 상태로 처리되었습니다. 레이팅/전적 반영 없이 종료합니다.", match.getId());
+            return;
         }
 
         submissionService.applyResult(
