@@ -5,6 +5,8 @@ import com.alphano.alphano.domain.match.domain.Match;
 import com.alphano.alphano.domain.match.domain.MatchStatus;
 import com.alphano.alphano.domain.match.dto.MatchJobMessage;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
+import com.alphano.alphano.domain.match.dto.response.MatchResultResponse;
+import com.alphano.alphano.domain.match.exception.MatchNotFoundException;
 import com.alphano.alphano.domain.match.exception.OpponentNotFoundException;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
@@ -13,6 +15,8 @@ import com.alphano.alphano.domain.submission.dao.SubmissionQueryRepository;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.exception.SubmissionCodeKeyMissingException;
 import com.alphano.alphano.domain.submission.exception.SubmissionNotFoundException;
+import com.alphano.alphano.domain.userHistory.dao.UserHistoryRepository;
+import com.alphano.alphano.domain.userHistory.domain.UserHistory;
 import com.alphano.alphano.domain.userRating.dao.UserRatingQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,7 @@ public class MatchService {
     private final SubmissionQueryRepository submissionQueryRepository;
     private final MatchRepository matchRepository;
     private final UserRatingQueryRepository userRatingQueryRepository;
+    private final UserHistoryRepository userHistoryRepository;
 
     @Transactional
     public MatchResponse create(Long problemId, Long userId) {
@@ -127,5 +132,33 @@ public class MatchService {
         } else {
             return 10.0;
         }
+    }
+
+    public MatchResultResponse getMatchResult(Long matchId) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> MatchNotFoundException.EXCEPTION);
+
+        if (match.getStatus() == MatchStatus.QUEUED
+                || match.getStatus() == MatchStatus.RUNNING
+                || match.getStatus() == MatchStatus.FAILED) {
+
+            return MatchResultResponse.ofStatus(match);
+        }
+
+        List<UserHistory> histories = userHistoryRepository.findAllByMatchId(matchId);
+        if (histories.size() != 2) {
+            throw new IllegalStateException("매치에 대한 히스토리가 2개가 아닙니다. matchId: " + matchId);
+        }
+
+        UserHistory history1, history2;
+        if (histories.get(0).getUser().getId().equals(match.getAgent1Id())) {
+            history1 = histories.get(0);
+            history2 = histories.get(1);
+        } else {
+            history1 = histories.get(1);
+            history2 = histories.get(0);
+        }
+
+        return MatchResultResponse.from(match, history1, history2);
     }
 }

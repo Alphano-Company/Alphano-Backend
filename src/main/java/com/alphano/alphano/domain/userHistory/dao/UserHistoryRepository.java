@@ -10,4 +10,6 @@ public interface UserHistoryRepository extends JpaRepository<UserHistory, Long> 
     List<UserHistory> match(Match match);
 
     boolean existsByMatchId(Long aLong);
+
+    List<UserHistory> findAllByMatchId(Long matchId);
 }
