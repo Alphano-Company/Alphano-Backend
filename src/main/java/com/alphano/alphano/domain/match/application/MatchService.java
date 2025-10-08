@@ -8,7 +8,6 @@ import com.alphano.alphano.domain.match.dto.MatchJobMessage;
 import com.alphano.alphano.domain.match.dto.response.MatchResponse;
 import com.alphano.alphano.domain.match.dto.response.MatchResultResponse;
 import com.alphano.alphano.domain.match.exception.MatchNotFoundException;
-import com.alphano.alphano.domain.match.exception.OpponentNotFoundException;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
