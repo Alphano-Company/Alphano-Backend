@@ -76,4 +76,9 @@ public class Match  extends BaseTimeEntity {
         this.agent1EndReason = sqsMessage.agent1Reason();
         this.agent2EndReason = sqsMessage.agent2Reason();
     }
+
+    public void addUserHistory(UserHistory userHistory) {
+        this.userHistories.add(userHistory);
+        userHistory.setMatch(this);
+    }
 }

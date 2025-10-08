@@ -40,7 +40,7 @@ public class UserHistory extends BaseTimeEntity {
     private Match match;
 
     public static UserHistory create(Match match, User user, Problem problem, double before, double after, Long opponentId, Outcome outcome) {
-        return UserHistory.builder()
+        UserHistory history =  UserHistory.builder()
                 .match(match)
                 .user(user)
                 .problem(problem)
@@ -50,5 +50,11 @@ public class UserHistory extends BaseTimeEntity {
                 .opponentId(opponentId)
                 .outcome(outcome)
                 .build();
+        match.addUserHistory(history);
+        return history;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
     }
 }
