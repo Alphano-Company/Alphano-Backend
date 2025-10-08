@@ -23,10 +23,6 @@ public class UserHistory extends BaseTimeEntity {
     private Double ratingAfter;
     private Double ratingDelta;
 
-    private Integer win;
-    private Integer lose;
-    private Integer draw;
-
     @Enumerated(EnumType.STRING)
     private Outcome outcome;
     private Long opponentId;
