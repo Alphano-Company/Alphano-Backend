@@ -41,4 +41,26 @@ public class UserRating extends BaseTimeEntity {
     public void setProblem(Problem problem) {
         this.problem = problem;
     }
+
+    public void updateRating(double newRating) {
+        this.rating = newRating;
+    }
+
+    public void applyWin() {
+        this.win++;
+        this.winStreak++;
+        if (this.winStreak > this.bestWinStreak) {
+            this.bestWinStreak = this.winStreak;
+        }
+    }
+
+    public void applyLose() {
+        this.lose++;
+        this.winStreak = 0;
+    }
+
+    public void applyDraw() {
+        this.draw++;
+        this.winStreak = 0;
+    }
 }

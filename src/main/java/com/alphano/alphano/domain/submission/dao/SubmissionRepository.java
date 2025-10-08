@@ -3,7 +3,9 @@ package com.alphano.alphano.domain.submission.dao;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.submission.domain.SubmissionStatus;
 import io.lettuce.core.dynamic.annotation.Param;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
@@ -47,4 +49,8 @@ join fetch s.user u
 where s.id = :id and u.id = :userId
 """)
     Optional<Submission> findByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM Submission s WHERE s.id = :submissionId")
+    Optional<Submission> findByIdForUpdate(@Param("submissionId") Long submissionId);
 }

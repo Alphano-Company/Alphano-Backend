@@ -75,4 +75,16 @@ public class Submission extends BaseTimeEntity {
     public boolean isReady() {
         return this.status == SubmissionStatus.READY;
     }
+
+    public void increaseWin() {
+        this.win++;
+    }
+
+    public void increaseLose() {
+        this.lose++;
+    }
+
+    public void increaseDraw() {
+        this.draw++;
+    }
 }

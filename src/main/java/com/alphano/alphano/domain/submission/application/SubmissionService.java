@@ -4,6 +4,10 @@ import com.alphano.alphano.common.application.S3Service;
 import com.alphano.alphano.common.dto.response.S3Response;
 import com.alphano.alphano.common.upload.KeyGenerator;
 import com.alphano.alphano.common.upload.SubmissionKeyGenerator;
+import com.alphano.alphano.domain.match.dao.MatchRepository;
+import com.alphano.alphano.domain.match.domain.Match;
+import com.alphano.alphano.domain.match.domain.MatchResult;
+import com.alphano.alphano.domain.match.exception.MatchNotFoundException;
 import com.alphano.alphano.domain.problem.dao.ProblemRepository;
 import com.alphano.alphano.domain.problem.domain.Problem;
 import com.alphano.alphano.domain.problem.exception.ProblemNotFoundException;
@@ -40,6 +44,7 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
     private final UserRepository userRepository;
     private final UserRatingRepository userRatingRepository;
+    private final MatchRepository matchRepository;
 
     public Page<SubmissionSummaryResponse> getAllSubmissions(Long userId, Long problemId, Pageable pageable) {
         if (!problemRepository.existsById(problemId)) {
@@ -113,5 +118,32 @@ public class SubmissionService {
         } else {
             throw SubmissionCodeObjectNotFoundException.EXCEPTION;
         }
+    }
+
+    @Transactional
+    public void applyResult(Long matchId, MatchResult result) {
+        Match match = matchRepository.findById(matchId)
+                .orElseThrow(() -> MatchNotFoundException.EXCEPTION);
+
+        Submission agent1 = submissionRepository.findByIdForUpdate(match.getAgent1Submission().getId())
+                .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
+        Submission agent2 = submissionRepository.findByIdForUpdate(match.getAgent2Submission().getId())
+                .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
+
+        switch (result) {
+            case AGENT1_WIN -> {
+                agent1.increaseWin();
+                agent2.increaseLose();
+            }
+            case AGENT2_WIN -> {
+                agent2.increaseWin();
+                agent1.increaseLose();
+            }
+            case DRAW -> {
+                agent1.increaseDraw();
+                agent2.increaseDraw();
+            }
+        }
+
     }
 }

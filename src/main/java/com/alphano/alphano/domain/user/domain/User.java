@@ -3,7 +3,7 @@ package com.alphano.alphano.domain.user.domain;
 import com.alphano.alphano.common.domain.BaseTimeEntity;
 import com.alphano.alphano.domain.submission.domain.Submission;
 import com.alphano.alphano.domain.userRating.domain.UserRating;
-import com.alphano.alphano.domain.userRatingHistory.domain.UserHistory;
+import com.alphano.alphano.domain.userHistory.domain.UserHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
