@@ -125,8 +125,10 @@ public class SubmissionService {
         Match match = matchRepository.findById(matchId)
                 .orElseThrow(() -> MatchNotFoundException.EXCEPTION);
 
-        Submission agent1 = match.getAgent1Submission();
-        Submission agent2 = match.getAgent2Submission();
+        Submission agent1 = submissionRepository.findByIdForUpdate(match.getAgent1Submission().getId())
+                .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
+        Submission agent2 = submissionRepository.findByIdForUpdate(match.getAgent2Submission().getId())
+                .orElseThrow(() -> SubmissionNotFoundException.EXCEPTION);
 
         switch (result) {
             case AGENT1_WIN -> {
