@@ -49,6 +49,7 @@ public class MatchResultProcessor {
                 sqsMessage.problemId(),
                 sqsMessage.result(),
                 sqsMessage.agent1UserId(),
-                sqsMessage.agent1UserId());
+                sqsMessage.agent2UserId()
+        );
     }
 }
