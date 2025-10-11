@@ -1,0 +1,57 @@
+name: Deploy Development Server
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 소스 코드 체크아웃
+      - name: checkout
+        uses: actions/checkout@v3
+
+      # 2. AWS 자격 증명 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2 # 본인의 리전으로 수정
+
+      # 3. Amazon ECR에 로그인
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # 4. 배포에 사용할 고유 이미지 태그 생성
+      - name: Set image tag
+        id: image_tag
+        run: echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      # 5. Docker 이미지 빌드 및 ECR에 푸시
+      - name: Build, tag, and push image to Amazon ECR
+        run: |
+          # App 이미지 빌드 및 푸시
+          docker build -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ env.TAG }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:${{ env.TAG }}
+          
+          # Nginx 이미지 빌드 및 푸시
+          docker build -f Dockerfile-nginx -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.NGINX_REPOSITORY }}:${{ env.TAG }} .
+          docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.NGINX_REPOSITORY }}:${{ env.TAG }}
+
+      # 6. EC2에 접속하여 배포 스크립트 실행
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
+          script: |
+            # deploy.sh 스크립트를 실행하고, 3개의 인자를 전달
+            # $1: 이미지 태그, $2: ECR Registry 주소, $3: ECR App 리포지토리 이름
+            /home/ubuntu/app/deploy.sh ${{ env.TAG }} ${{ secrets.ECR_REGISTRY }} ${{ secrets.ECR_REPOSITORY }}

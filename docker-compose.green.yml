@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  green:
+    image: ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG:-latest}
+    container_name: web-green
+    ports:
+      - "8082:8080" # Green은 8082 포트 사용
+    env_file: .env
